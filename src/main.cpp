@@ -1,6 +1,6 @@
 #include "game_window/game_window.h"
+#include "screens/start_screen.h"
 #include <GL/glut.h>
-#include <stdio.h>
 
 int main(int argc, char **argv)
 {
@@ -9,9 +9,8 @@ int main(int argc, char **argv)
     bool startFullscreen = true;
     window->create(argc, argv, 800, 600, "Hoppy - OpenGL Game", startFullscreen);
 
-    window->setDisplayCallback(display);
-    window->setKeyboardCallback(keyboard);
-    window->setSpecialCallback(specialKeys);
+    StartScreen *startScreen = new StartScreen();
+    window->setScreen(startScreen);
 
     window->run();
 
