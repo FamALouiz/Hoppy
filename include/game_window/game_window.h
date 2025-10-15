@@ -4,6 +4,7 @@
 #include <GL/glut.h>
 #include <string>
 #include "game_window/utils.h"
+#include "game_window/game_screen.h"
 
 class GameWindow
 {
@@ -21,6 +22,8 @@ private:
     int windowedPosX;
     int windowedPosY;
 
+    GameScreen *currentScreen;
+
     GameWindow();
     GameWindow(const GameWindow &) = delete;
     GameWindow &operator=(const GameWindow &) = delete;
@@ -37,6 +40,9 @@ public:
     void resize(int w, int h);
     void setTitle(const char *newTitle);
 
+    void setScreen(GameScreen *screen);
+    GameScreen *getScreen() const;
+
     int getWidth() const { return width; }
     int getHeight() const { return height; }
     int getWindowID() const { return windowID; }
@@ -45,15 +51,6 @@ public:
 
     void screenToNormalized(int screenX, int screenY, float &normX, float &normY) const;
     void normalizedToScreen(float normX, float normY, int &screenX, int &screenY) const;
-
-    void setDisplayCallback(void (*func)(void));
-    void setReshapeCallback(void (*func)(int, int));
-    void setKeyboardCallback(void (*func)(unsigned char, int, int));
-    void setSpecialCallback(void (*func)(int, int, int));
-    void setMouseCallback(void (*func)(int, int, int, int));
-    void setMotionCallback(void (*func)(int, int));
-    void setIdleCallback(void (*func)(void));
-    void setTimerCallback(void (*func)(int), unsigned int milliseconds, int value);
 
     void run();
     static void destroy();
