@@ -8,6 +8,11 @@ PhysicsObject::PhysicsObject(float x, float y, void (*drawFunc)())
 
 void PhysicsObject::update(float deltaTime)
 {
+    velocityX += accelerationX * deltaTime;
+    velocityY += accelerationY * deltaTime;
+
+    x += velocityX * deltaTime;
+    y += velocityY * deltaTime;
 }
 
 void PhysicsObject::draw()
@@ -16,12 +21,6 @@ void PhysicsObject::draw()
     {
         drawFunction();
     }
-}
-
-void PhysicsObject::setVelocity(float vx, float vy)
-{
-    velocityX = vx;
-    velocityY = vy;
 }
 
 StaticObject::StaticObject(float x, float y, void (*drawFunc)())

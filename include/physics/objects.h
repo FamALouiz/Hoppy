@@ -28,12 +28,24 @@ class PhysicsObject : public _Object
 {
 private:
     float velocityX, velocityY;
+    float accelerationX, accelerationY;
 
 public:
     PhysicsObject(float x, float y, void (*drawFunc)());
-    void setVelocity(float vx, float vy);
+    void setVelocity(float vx, float vy)
+    {
+        velocityX = vx;
+        velocityY = vy;
+    }
+    void setAcceleration(float ax, float ay)
+    {
+        accelerationX = ax;
+        accelerationY = ay;
+    }
     float getVelocityX() const { return velocityX; }
     float getVelocityY() const { return velocityY; }
+    float getAccelerationX() const { return accelerationX; }
+    float getAccelerationY() const { return accelerationY; }
     void update(float deltaTime);
     void draw();
 };
