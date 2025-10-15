@@ -1,7 +1,9 @@
 #include "screens/start_screen.h"
+#include "screens/main_screen.h"
 #include <GL/glut.h>
 #include <stdio.h>
 #include <math.h>
+#include "game_window/game_window.h"
 
 StartScreen::StartScreen() : titlePulse(0.0f), showPressStart(true), blinkTimer(0.0f)
 {
@@ -41,8 +43,6 @@ void StartScreen::update(float deltaTime)
 
 void StartScreen::display()
 {
-    glClear(GL_COLOR_BUFFER_BIT);
-
     drawBackground();
     drawTitle();
     drawPressStart();
@@ -53,6 +53,8 @@ void StartScreen::handleKeyboard(unsigned char key, int x, int y)
     if (key == ' ' || key == 13)
     {
         printf("Starting game...\n");
+        MainScreen *mainScreen = new MainScreen();
+        GameWindow::getInstance()->setScreen(mainScreen);
     }
 }
 

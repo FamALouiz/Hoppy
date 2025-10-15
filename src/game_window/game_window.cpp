@@ -205,6 +205,8 @@ static void displayWrapper()
     GameWindow *window = GameWindow::getInstance();
     GameScreen *screen = window->getScreen();
 
+    glClear(GL_COLOR_BUFFER_BIT);
+
     if (screen != nullptr && screen->getActive())
     {
         screen->display();
@@ -213,6 +215,8 @@ static void displayWrapper()
     {
         glClear(GL_COLOR_BUFFER_BIT);
     }
+
+    glFlush();
     glutSwapBuffers();
 }
 
