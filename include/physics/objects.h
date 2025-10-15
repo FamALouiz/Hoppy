@@ -8,10 +8,10 @@ class _Object
 {
 protected:
     float x, y;
-    void (*drawFunction)();
+    void (*drawFunction)(float, float);
 
 public:
-    _Object(float x, float y, void (*drawFunc)()) : x(x), y(y), drawFunction(drawFunc) {}
+    _Object(float x, float y, void (*drawFunc)(float, float)) : x(x), y(y), drawFunction(drawFunc) {}
     virtual void draw() = 0;
     virtual void update(float deltaTime) = 0;
     virtual ~_Object() {}
@@ -28,10 +28,11 @@ class PhysicsObject : public _Object
 {
 private:
     float velocityX, velocityY;
+    float terminalVelocityY, terminalVelocityX;
     float accelerationX, accelerationY;
 
 public:
-    PhysicsObject(float x, float y, void (*drawFunc)());
+    PhysicsObject(float x, float y, float terminalVelocityX, float terminalVelocityY, void (*drawFunc)(float, float));
     void setVelocity(float vx, float vy)
     {
         velocityX = vx;
@@ -42,6 +43,10 @@ public:
         accelerationX = ax;
         accelerationY = ay;
     }
+    void moveLeft(float amount) { x -= amount; }
+    void moveRight(float amount) { x += amount; }
+    void moveUp(float amount) { y += amount; }
+    void moveDown(float amount) { y -= amount; }
     float getVelocityX() const { return velocityX; }
     float getVelocityY() const { return velocityY; }
     float getAccelerationX() const { return accelerationX; }
@@ -53,7 +58,7 @@ public:
 class StaticObject : public _Object
 {
 public:
-    StaticObject(float x, float y, void (*drawFunc)());
+    StaticObject(float x, float y, void (*drawFunc)(float, float));
     void draw();
     void update(float deltaTime) {};
 };
