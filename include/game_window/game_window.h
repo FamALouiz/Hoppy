@@ -6,6 +6,8 @@
 #include "game_window/utils.h"
 #include "game_window/game_screen.h"
 
+#define TIME_DELTA 0.0069f
+
 class GameWindow
 {
 private:

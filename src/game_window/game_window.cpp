@@ -286,7 +286,7 @@ static void timerWrapper(int value)
 
     if (screen != nullptr && screen->getActive())
     {
-        screen->update(0.016f);
+        screen->update(TIME_DELTA);
     }
 
     glutPostRedisplay();

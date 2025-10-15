@@ -20,6 +20,7 @@ public:
 
     void addPlatform(const StaticObject &platform) { platforms.push_back(platform); }
     void addObject(const PhysicsObject &obj) { objects.push_back(obj); }
+    PhysicsObject *getPlayer();
     void init() override;
     void update(float deltaTime) override;
     void display() override;
