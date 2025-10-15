@@ -3,15 +3,28 @@
 
 GameWindow *GameWindow::instance = nullptr;
 
+static void displayWrapper();
+static void keyboardWrapper(unsigned char key, int x, int y);
+static void specialWrapper(int key, int x, int y);
+static void mouseWrapper(int button, int state, int x, int y);
+static void motionWrapper(int x, int y);
+static void timerWrapper(int value);
+
 GameWindow::GameWindow()
     : width(800), height(600), windowID(-1), isFullscreen(true),
       title("GLUT Window"), windowedWidth(800), windowedHeight(600),
-      windowedPosX(100), windowedPosY(100)
+      windowedPosX(100), windowedPosY(100), currentScreen(nullptr)
 {
 }
 
 GameWindow::~GameWindow()
 {
+    if (currentScreen != nullptr)
+    {
+        delete currentScreen;
+        currentScreen = nullptr;
+    }
+
     if (windowID != -1)
     {
         glutDestroyWindow(windowID);
@@ -142,49 +155,38 @@ void GameWindow::normalizedToScreen(float normX, float normY, int &screenX, int 
     screenY = static_cast<int>((1.0f - normY) * height / 2.0f);
 }
 
-void GameWindow::setDisplayCallback(void (*func)(void))
+void GameWindow::setScreen(GameScreen *screen)
 {
-    glutDisplayFunc(func);
+    if (currentScreen != nullptr)
+    {
+        currentScreen->setActive(false);
+    }
+
+    currentScreen = screen;
+
+    if (currentScreen != nullptr)
+    {
+        currentScreen->setActive(true);
+        currentScreen->init();
+    }
 }
 
-void GameWindow::setReshapeCallback(void (*func)(int, int))
+GameScreen *GameWindow::getScreen() const
 {
-    glutReshapeFunc(func);
-}
-
-void GameWindow::setKeyboardCallback(void (*func)(unsigned char, int, int))
-{
-    glutKeyboardFunc(func);
-}
-
-void GameWindow::setSpecialCallback(void (*func)(int, int, int))
-{
-    glutSpecialFunc(func);
-}
-
-void GameWindow::setMouseCallback(void (*func)(int, int, int, int))
-{
-    glutMouseFunc(func);
-}
-
-void GameWindow::setMotionCallback(void (*func)(int, int))
-{
-    glutMotionFunc(func);
-}
-
-void GameWindow::setIdleCallback(void (*func)(void))
-{
-    glutIdleFunc(func);
-}
-
-void GameWindow::setTimerCallback(void (*func)(int), unsigned int milliseconds, int value)
-{
-    glutTimerFunc(milliseconds, func, value);
+    return currentScreen;
 }
 
 void GameWindow::run()
 {
     printf("Starting main loop...\n");
+
+    glutDisplayFunc(displayWrapper);
+    glutKeyboardFunc(keyboardWrapper);
+    glutSpecialFunc(specialWrapper);
+    glutMouseFunc(mouseWrapper);
+    glutMotionFunc(motionWrapper);
+    glutTimerFunc(16, timerWrapper, 0);
+
     glutMainLoop();
 }
 
@@ -196,4 +198,93 @@ void GameWindow::destroy()
         instance = nullptr;
         printf("GameWindow destroyed\n");
     }
+}
+
+static void displayWrapper()
+{
+    GameWindow *window = GameWindow::getInstance();
+    GameScreen *screen = window->getScreen();
+
+    if (screen != nullptr && screen->getActive())
+    {
+        screen->display();
+    }
+    else
+    {
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+    glutSwapBuffers();
+}
+
+static void keyboardWrapper(unsigned char key, int x, int y)
+{
+    GameWindow *window = GameWindow::getInstance();
+    GameScreen *screen = window->getScreen();
+
+    if (key == 27)
+    {
+        GameWindow::destroy();
+        exit(0);
+    }
+    else if (key == 'f' || key == 'F')
+    {
+        window->toggleFullscreen();
+    }
+
+    if (screen != nullptr && screen->getActive())
+    {
+        screen->handleKeyboard(key, x, y);
+    }
+}
+
+static void specialWrapper(int key, int x, int y)
+{
+    GameWindow *window = GameWindow::getInstance();
+    GameScreen *screen = window->getScreen();
+
+    if (key == GLUT_KEY_F11)
+    {
+        window->toggleFullscreen();
+    }
+
+    if (screen != nullptr && screen->getActive())
+    {
+        screen->handleSpecialKeys(key, x, y);
+    }
+}
+
+static void mouseWrapper(int button, int state, int x, int y)
+{
+    GameWindow *window = GameWindow::getInstance();
+    GameScreen *screen = window->getScreen();
+
+    if (screen != nullptr && screen->getActive())
+    {
+        screen->handleMouse(button, state, x, y);
+    }
+}
+
+static void motionWrapper(int x, int y)
+{
+    GameWindow *window = GameWindow::getInstance();
+    GameScreen *screen = window->getScreen();
+
+    if (screen != nullptr && screen->getActive())
+    {
+        screen->handleMouseMotion(x, y);
+    }
+}
+
+static void timerWrapper(int value)
+{
+    GameWindow *window = GameWindow::getInstance();
+    GameScreen *screen = window->getScreen();
+
+    if (screen != nullptr && screen->getActive())
+    {
+        screen->update(0.016f);
+    }
+
+    glutPostRedisplay();
+    glutTimerFunc(16, timerWrapper, 0);
 }
