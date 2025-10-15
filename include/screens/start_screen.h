@@ -3,6 +3,8 @@
 
 #include "game_window/game_screen.h"
 #include <string>
+#include <GL/glut.h>
+#include "utils.h"
 
 class StartScreen : public GameScreen
 {
@@ -11,7 +13,6 @@ private:
     bool showPressStart;
     float blinkTimer;
 
-    void drawText(const char *text, float x, float y, float scale);
     void drawRect(float x, float y, float width, float height);
     void drawTitle();
     void drawPressStart();

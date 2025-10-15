@@ -71,7 +71,7 @@ void StartScreen::drawBackground()
     glVertex2f(-1.0f, 1.0f);
     glEnd();
 
-    for (int i = 0; i < 20; i++)
+    for (int i = 0; i < 30; i++)
     {
         float x = -1.0f + (i * 0.1f);
         float pulse = sin(titlePulse + i * 0.3f) * 0.2f;
@@ -92,13 +92,13 @@ void StartScreen::drawTitle()
     float pulse = sin(titlePulse) * 0.1f + 0.9f;
     glColor3f(pulse, pulse * 0.8f, 0.2f);
 
-    drawRect(-0.4f, 0.3f, 0.8f, 0.3f);
+    // drawRect(-0.4f, 0.3f, 0.8f, 0.3f);
 
     glColor3f(0.1f, 0.1f, 0.2f);
-    drawRect(-0.35f, 0.35f, 0.7f, 0.2f);
+    drawRect(0.0f, 0.45f, 0.7f, 0.15f);
 
     glColor3f(pulse, pulse * 0.8f, 0.2f);
-    drawText("HOPPY", 0.0f, 0.45f, 0.15f);
+    drawText("Hoppy - Ready to have fun?", 0.0f, 0.45f, 0.04f);
 }
 
 void StartScreen::drawPressStart()
@@ -124,32 +124,4 @@ void StartScreen::drawRect(float x, float y, float width, float height)
     glVertex2f(x + halfWidth, y + halfHeight);
     glVertex2f(x - halfWidth, y + halfHeight);
     glEnd();
-}
-
-void StartScreen::drawText(const char *text, float x, float y, float scale)
-{
-    glPushMatrix();
-
-    int len = 0;
-    while (text[len] != '\0')
-    {
-        len++;
-    }
-
-    float totalWidth = len * scale * 0.6f;
-    float startX = x - totalWidth * 0.5f;
-
-    for (int i = 0; i < len; i++)
-    {
-        float charX = startX + i * scale * 0.6f;
-
-        glBegin(GL_QUADS);
-        glVertex2f(charX, y - scale * 0.5f);
-        glVertex2f(charX + scale * 0.5f, y - scale * 0.5f);
-        glVertex2f(charX + scale * 0.5f, y + scale * 0.5f);
-        glVertex2f(charX, y + scale * 0.5f);
-        glEnd();
-    }
-
-    glPopMatrix();
 }
