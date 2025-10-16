@@ -9,6 +9,7 @@
 #include <vector>
 
 #define MOVEMENT_SPEED 25.0f
+#define JUMP_SPEED 50.0f
 
 class MainScreen : public GameScreen
 {

@@ -48,7 +48,7 @@ void StartScreen::display()
     drawPressStart();
 }
 
-void StartScreen::handleKeyboard(unsigned char key, int x, int y)
+void StartScreen::handleKeyboardUp(unsigned char key, int x, int y)
 {
     if (key == ' ' || key == 13)
     {
@@ -58,7 +58,15 @@ void StartScreen::handleKeyboard(unsigned char key, int x, int y)
     }
 }
 
-void StartScreen::handleSpecialKeys(int key, int x, int y)
+void StartScreen::handleSpecialKeysUp(int key, int x, int y)
+{
+}
+
+void StartScreen::handleKeyboardDown(unsigned char key, int x, int y)
+{
+}
+
+void StartScreen::handleSpecialKeysDown(int key, int x, int y)
 {
 }
 

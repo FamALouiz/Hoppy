@@ -45,7 +45,7 @@ void MainScreen::init()
     };
     PhysicsObject *player = new PhysicsObject(0.0f, 0.0f, 1.5f, 1.5f, playerDrawFunc);
     player->setVelocity(0.0f, 0.0f);
-    player->setAcceleration(0.0f, GRAVITY / 4);
+    player->setAcceleration(0.0f, GRAVITY);
     player->setCollisionBox(0.1f, 0.1f);
     addObject(player);
 
@@ -140,7 +140,7 @@ void MainScreen::update(float deltaTime)
         }
         else
         {
-            player->setAcceleration(0.0f, GRAVITY / 4);
+            player->setAcceleration(0.0f, GRAVITY);
         }
     }
 
@@ -211,7 +211,7 @@ void MainScreen::handleSpecialKeysDown(int key, int x, int y)
     case GLUT_KEY_UP:
         if (player->getIsGrounded())
         {
-            player->setVelocity(player->getVelocityX(), 12.0f);
+            player->setVelocity(player->getVelocityX(), JUMP_SPEED);
         }
         break;
     }

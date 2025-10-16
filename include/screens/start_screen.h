@@ -25,8 +25,10 @@ public:
     void init() override;
     void update(float deltaTime) override;
     void display() override;
-    void handleKeyboard(unsigned char key, int x, int y) override;
-    void handleSpecialKeys(int key, int x, int y) override;
+    void handleKeyboardUp(unsigned char key, int x, int y) override;
+    void handleKeyboardDown(unsigned char key, int x, int y) override;
+    void handleSpecialKeysUp(int key, int x, int y) override;
+    void handleSpecialKeysDown(int key, int x, int y) override;
 };
 
 #endif
