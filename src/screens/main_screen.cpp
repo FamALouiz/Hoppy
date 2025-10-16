@@ -3,7 +3,7 @@
 #include "physics/core.h"
 #include <iostream>
 
-MainScreen::MainScreen()
+MainScreen::MainScreen() : platformGenerator(nullptr)
 {
 }
 
@@ -156,11 +156,10 @@ void MainScreen::display()
     PhysicsObject *player = getPlayer();
     if (player)
     {
-        float camX = player->getX();
         float camY = player->getY();
 
         glLoadIdentity();
-        gluLookAt(camX, camY, 1.0f, camX, camY, 0.0f, 0.0f, 1.0f, 0.0f);
+        gluLookAt(0.0f, camY, 1.0f, 0.0f, camY, 0.0f, 0.0f, 1.0f, 0.0f);
     }
     else
     {
