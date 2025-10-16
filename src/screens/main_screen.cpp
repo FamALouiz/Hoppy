@@ -3,7 +3,7 @@
 #include "physics/core.h"
 #include <iostream>
 
-MainScreen::MainScreen() : platformGenerator(nullptr)
+MainScreen::MainScreen() : platformGenerator(nullptr), meteorGenerator(nullptr)
 {
 }
 
@@ -15,6 +15,12 @@ MainScreen::~MainScreen()
     }
     objects.clear();
 
+    for (PhysicsObject *meteor : meteors)
+    {
+        delete meteor;
+    }
+    meteors.clear();
+
     for (StaticObject *platform : platforms)
     {
         delete platform;
@@ -25,6 +31,12 @@ MainScreen::~MainScreen()
     {
         delete platformGenerator;
         platformGenerator = nullptr;
+    }
+
+    if (meteorGenerator)
+    {
+        delete meteorGenerator;
+        meteorGenerator = nullptr;
     }
 }
 
@@ -79,6 +91,28 @@ void MainScreen::init()
         SCREEN_RIGHT,
         GENERATION_AHEAD,
         platformDrawFunc);
+
+    auto meteorDrawFunc = [](float x, float y)
+    {
+        glBegin(GL_TRIANGLES);
+        glColor3f(METEOR_COLOR_R, METEOR_COLOR_G, METEOR_COLOR_B);
+        glVertex2f(x, y + METEOR_SIZE);
+        glVertex2f(x - METEOR_SIZE, y - METEOR_SIZE);
+        glVertex2f(x + METEOR_SIZE, y - METEOR_SIZE);
+        glEnd();
+    };
+
+    meteorGenerator = new MeteorGenerator(
+        METEOR_SECTIONS,
+        METEOR_SPACING,
+        METEOR_SIZE,
+        SCREEN_LEFT,
+        SCREEN_RIGHT,
+        METEOR_TERMINAL_VELOCITY_X,
+        METEOR_TERMINAL_VELOCITY_Y,
+        METEOR_GRAVITY,
+        METEOR_BATCH_SIZE,
+        meteorDrawFunc);
 }
 
 void MainScreen::update(float deltaTime)
@@ -105,6 +139,11 @@ void MainScreen::update(float deltaTime)
         if (platformGenerator)
         {
             platformGenerator->generatePlatforms(platforms, player->getY());
+        }
+
+        if (meteorGenerator)
+        {
+            meteorGenerator->generateMeteors(meteors, player->getY());
         }
 
         std::vector<_Object *> collisions = player->getCollidingObjects();
@@ -169,6 +208,11 @@ void MainScreen::update(float deltaTime)
         if (obj != player)
             obj->update(deltaTime);
     }
+
+    for (PhysicsObject *meteor : meteors)
+    {
+        meteor->update(deltaTime);
+    }
 }
 
 void MainScreen::display()
@@ -190,6 +234,11 @@ void MainScreen::display()
     for (StaticObject *platform : platforms)
     {
         platform->draw();
+    }
+
+    for (PhysicsObject *meteor : meteors)
+    {
+        meteor->draw();
     }
 
     for (PhysicsObject *obj : objects)

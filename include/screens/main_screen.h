@@ -7,6 +7,7 @@
 #include "utils.h"
 #include "physics/objects.h"
 #include "generators/platform_generator.h"
+#include "generators/meteor_generator.h"
 #include <vector>
 
 #define MOVEMENT_SPEED 25.0f
@@ -17,7 +18,9 @@ class MainScreen : public GameScreen
 private:
     std::vector<StaticObject *> platforms;
     std::vector<PhysicsObject *> objects;
+    std::vector<PhysicsObject *> meteors;
     PlatformGenerator *platformGenerator;
+    MeteorGenerator *meteorGenerator;
 
 public:
     MainScreen();
@@ -25,6 +28,7 @@ public:
 
     void addPlatform(StaticObject *platform) { platforms.push_back(platform); }
     void addObject(PhysicsObject *obj) { objects.push_back(obj); }
+    void addMeteor(PhysicsObject *meteor) { meteors.push_back(meteor); }
     PhysicsObject *getPlayer();
     void init() override;
     void update(float deltaTime) override;
