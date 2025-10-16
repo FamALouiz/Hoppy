@@ -27,7 +27,7 @@ private:
     float terminalVelocityY;
     float gravity;
     int batchSize;
-    float lastGeneratedHeight = -10.0f;
+    float lastGeneratedHeight = 2.0f;
 
     float getSectionCenter(int section);
     void (*meteorDrawFunc)(float, float);
