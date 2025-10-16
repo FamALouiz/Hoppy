@@ -20,6 +20,12 @@ MainScreen::~MainScreen()
         delete platform;
     }
     platforms.clear();
+
+    if (platformGenerator)
+    {
+        delete platformGenerator;
+        platformGenerator = nullptr;
+    }
 }
 
 void MainScreen::init()
@@ -52,33 +58,27 @@ void MainScreen::init()
     auto platformDrawFunc = [](float x, float y)
     {
         glBegin(GL_QUADS);
-        glColor3f(0.5f, 0.3f, 0.1f);
-        glVertex2f(x - 0.2f, y - 0.05f);
-        glVertex2f(x + 0.2f, y - 0.05f);
-        glVertex2f(x + 0.2f, y + 0.05f);
-        glVertex2f(x - 0.2f, y + 0.05f);
+        glColor3f(PLATFORM_COLOR_R, PLATFORM_COLOR_G, PLATFORM_COLOR_B);
+        glVertex2f(x - PLATFORM_WIDTH / 2.0f, y - PLATFORM_HEIGHT / 2.0f);
+        glVertex2f(x + PLATFORM_WIDTH / 2.0f, y - PLATFORM_HEIGHT / 2.0f);
+        glVertex2f(x + PLATFORM_WIDTH / 2.0f, y + PLATFORM_HEIGHT / 2.0f);
+        glVertex2f(x - PLATFORM_WIDTH / 2.0f, y + PLATFORM_HEIGHT / 2.0f);
         glEnd();
     };
 
     StaticObject *ground = new StaticObject(0.0f, -0.8f, platformDrawFunc);
-    ground->setCollisionBox(0.4f, 0.1f);
+    ground->setCollisionBox(PLATFORM_WIDTH, PLATFORM_HEIGHT);
     addPlatform(ground);
 
-    StaticObject *platform1 = new StaticObject(-0.6f, -0.4f, platformDrawFunc);
-    platform1->setCollisionBox(0.4f, 0.1f);
-    addPlatform(platform1);
-
-    StaticObject *platform2 = new StaticObject(0.6f, -0.2f, platformDrawFunc);
-    platform2->setCollisionBox(0.4f, 0.1f);
-    addPlatform(platform2);
-
-    StaticObject *platform3 = new StaticObject(-0.3f, 0.2f, platformDrawFunc);
-    platform3->setCollisionBox(0.4f, 0.1f);
-    addPlatform(platform3);
-
-    StaticObject *platform4 = new StaticObject(0.8f, 0.4f, platformDrawFunc);
-    platform4->setCollisionBox(0.4f, 0.1f);
-    addPlatform(ground);
+    platformGenerator = new PlatformGenerator(
+        SCREEN_SECTIONS,
+        PLATFORM_SPACING,
+        PLATFORM_WIDTH,
+        PLATFORM_HEIGHT,
+        SCREEN_LEFT,
+        SCREEN_RIGHT,
+        GENERATION_AHEAD,
+        platformDrawFunc);
 }
 
 void MainScreen::update(float deltaTime)
@@ -87,6 +87,26 @@ void MainScreen::update(float deltaTime)
     if (player)
     {
         player->update(deltaTime);
+
+        float playerX = player->getX();
+        float playerWidth = player->getCollisionWidth() / 2.0f;
+
+        if (playerX - playerWidth < SCREEN_LEFT)
+        {
+            player->setPosition(SCREEN_LEFT + playerWidth, player->getY());
+            player->setVelocity(0.0f, player->getVelocityY());
+        }
+        else if (playerX + playerWidth > SCREEN_RIGHT)
+        {
+            player->setPosition(SCREEN_RIGHT - playerWidth, player->getY());
+            player->setVelocity(0.0f, player->getVelocityY());
+        }
+
+        if (platformGenerator)
+        {
+            platformGenerator->generatePlatforms(platforms, player->getY());
+        }
+
         std::vector<_Object *> collisions = player->getCollidingObjects();
         bool grounded = false;
 

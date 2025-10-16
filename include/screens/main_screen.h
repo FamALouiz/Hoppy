@@ -6,6 +6,7 @@
 #include <GL/glut.h>
 #include "utils.h"
 #include "physics/objects.h"
+#include "generators/platform_generator.h"
 #include <vector>
 
 #define MOVEMENT_SPEED 25.0f
@@ -16,6 +17,7 @@ class MainScreen : public GameScreen
 private:
     std::vector<StaticObject *> platforms;
     std::vector<PhysicsObject *> objects;
+    PlatformGenerator *platformGenerator;
 
 public:
     MainScreen();
