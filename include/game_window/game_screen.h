@@ -15,8 +15,10 @@ public:
     virtual void init();
     virtual void update(float deltaTime);
     virtual void display();
-    virtual void handleKeyboard(unsigned char key, int x, int y);
-    virtual void handleSpecialKeys(int key, int x, int y);
+    virtual void handleKeyboardUp(unsigned char key, int x, int y);
+    virtual void handleSpecialKeysUp(int key, int x, int y);
+    virtual void handleKeyboardDown(unsigned char key, int x, int y);
+    virtual void handleSpecialKeysDown(int key, int x, int y);
     virtual void handleMouse(int button, int state, int x, int y);
     virtual void handleMouseMotion(int x, int y);
 

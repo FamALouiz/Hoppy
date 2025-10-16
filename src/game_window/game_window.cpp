@@ -4,8 +4,10 @@
 GameWindow *GameWindow::instance = nullptr;
 
 static void displayWrapper();
-static void keyboardWrapper(unsigned char key, int x, int y);
-static void specialWrapper(int key, int x, int y);
+static void keyboardDownWrapper(unsigned char key, int x, int y);
+static void keyboardUpWrapper(unsigned char key, int x, int y);
+static void specialDownWrapper(int key, int x, int y);
+static void specialUpWrapper(int key, int x, int y);
 static void mouseWrapper(int button, int state, int x, int y);
 static void motionWrapper(int x, int y);
 static void timerWrapper(int value);
@@ -181,8 +183,10 @@ void GameWindow::run()
     printf("Starting main loop...\n");
 
     glutDisplayFunc(displayWrapper);
-    glutKeyboardFunc(keyboardWrapper);
-    glutSpecialFunc(specialWrapper);
+    glutKeyboardFunc(keyboardDownWrapper);
+    glutKeyboardUpFunc(keyboardUpWrapper);
+    glutSpecialFunc(specialDownWrapper);
+    glutSpecialUpFunc(specialUpWrapper);
     glutMouseFunc(mouseWrapper);
     glutMotionFunc(motionWrapper);
     glutTimerFunc(16, timerWrapper, 0);
@@ -220,7 +224,7 @@ static void displayWrapper()
     glutSwapBuffers();
 }
 
-static void keyboardWrapper(unsigned char key, int x, int y)
+static void keyboardDownWrapper(unsigned char key, int x, int y)
 {
     GameWindow *window = GameWindow::getInstance();
     GameScreen *screen = window->getScreen();
@@ -237,11 +241,22 @@ static void keyboardWrapper(unsigned char key, int x, int y)
 
     if (screen != nullptr && screen->getActive())
     {
-        screen->handleKeyboard(key, x, y);
+        screen->handleKeyboardDown(key, x, y);
     }
 }
 
-static void specialWrapper(int key, int x, int y)
+static void keyboardUpWrapper(unsigned char key, int x, int y)
+{
+    GameWindow *window = GameWindow::getInstance();
+    GameScreen *screen = window->getScreen();
+
+    if (screen != nullptr && screen->getActive())
+    {
+        screen->handleKeyboardUp(key, x, y);
+    }
+}
+
+static void specialDownWrapper(int key, int x, int y)
 {
     GameWindow *window = GameWindow::getInstance();
     GameScreen *screen = window->getScreen();
@@ -253,7 +268,18 @@ static void specialWrapper(int key, int x, int y)
 
     if (screen != nullptr && screen->getActive())
     {
-        screen->handleSpecialKeys(key, x, y);
+        screen->handleSpecialKeysDown(key, x, y);
+    }
+}
+
+static void specialUpWrapper(int key, int x, int y)
+{
+    GameWindow *window = GameWindow::getInstance();
+    GameScreen *screen = window->getScreen();
+
+    if (screen != nullptr && screen->getActive())
+    {
+        screen->handleSpecialKeysUp(key, x, y);
     }
 }
 

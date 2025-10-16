@@ -1,8 +1,7 @@
 #include <GL/glut.h>
 #include "screens/main_screen.h"
 #include "physics/core.h"
-
-#define MOVEMENT_SPEED 0.01f
+#include <iostream>
 
 MainScreen::MainScreen()
 {
@@ -10,6 +9,17 @@ MainScreen::MainScreen()
 
 MainScreen::~MainScreen()
 {
+    for (PhysicsObject *obj : objects)
+    {
+        delete obj;
+    }
+    objects.clear();
+
+    for (StaticObject *platform : platforms)
+    {
+        delete platform;
+    }
+    platforms.clear();
 }
 
 void MainScreen::init()
@@ -33,30 +43,122 @@ void MainScreen::init()
         glVertex2f(x - 0.05f, y + 0.05f);
         glEnd();
     };
-    PhysicsObject player = PhysicsObject(0.0f, 0.0f, 1.5f, 1.5f, playerDrawFunc);
-    player.setVelocity(0.0f, 0.0f);
-    player.setAcceleration(0.0f, GRAVITY);
+    PhysicsObject *player = new PhysicsObject(0.0f, 0.0f, 1.5f, 1.5f, playerDrawFunc);
+    player->setVelocity(0.0f, 0.0f);
+    player->setAcceleration(0.0f, GRAVITY / 4);
+    player->setCollisionBox(0.1f, 0.1f);
     addObject(player);
+
+    auto platformDrawFunc = [](float x, float y)
+    {
+        glBegin(GL_QUADS);
+        glColor3f(0.5f, 0.3f, 0.1f);
+        glVertex2f(x - 0.2f, y - 0.05f);
+        glVertex2f(x + 0.2f, y - 0.05f);
+        glVertex2f(x + 0.2f, y + 0.05f);
+        glVertex2f(x - 0.2f, y + 0.05f);
+        glEnd();
+    };
+    StaticObject *ground = new StaticObject(0.0f, -0.8f, platformDrawFunc);
+    ground->setCollisionBox(0.4f, 0.1f);
+    addPlatform(ground);
 }
 
 void MainScreen::update(float deltaTime)
 {
-    for (PhysicsObject &obj : objects)
+    PhysicsObject *player = getPlayer();
+    if (player)
     {
-        obj.update(deltaTime);
+        player->update(deltaTime);
+        std::vector<_Object *> collisions = player->getCollidingObjects();
+        bool grounded = false;
+
+        for (_Object *obj : collisions)
+        {
+            StaticObject *platform = dynamic_cast<StaticObject *>(obj);
+            if (platform)
+            {
+                if (player->isCollidingFromTop(platform))
+                {
+                    float platformTop = platform->getY() + platform->getCollisionHeight() / 2.0f;
+                    player->setPosition(player->getX(), platformTop + player->getCollisionHeight() / 2.0f);
+
+                    if (player->getVelocityY() < 0)
+                    {
+                        player->setVelocity(player->getVelocityX(), 0.0f);
+                    }
+
+                    grounded = true;
+                }
+                else if (player->isCollidingFromBottom(platform))
+                {
+                    float platformBottom = platform->getY() - platform->getCollisionHeight() / 2.0f;
+                    player->setPosition(player->getX(), platformBottom - player->getCollisionHeight() / 2.0f);
+
+                    if (player->getVelocityY() > 0)
+                    {
+                        player->setVelocity(player->getVelocityX(), 0.0f);
+                    }
+                }
+                else if (player->isCollidingFromLeft(platform))
+                {
+                    float platformLeft = platform->getX() - platform->getCollisionWidth() / 2.0f;
+                    player->setPosition(platformLeft - player->getCollisionWidth() / 2.0f, player->getY());
+                    player->setVelocity(0.0f, player->getVelocityY());
+                }
+                else if (player->isCollidingFromRight(platform))
+                {
+                    float platformRight = platform->getX() + platform->getCollisionWidth() / 2.0f;
+                    player->setPosition(platformRight + player->getCollisionWidth() / 2.0f, player->getY());
+                    player->setVelocity(0.0f, player->getVelocityY());
+                }
+            }
+        }
+
+        player->setGrounded(grounded);
+
+        if (grounded)
+        {
+            player->setAcceleration(0.0f, 0.0f);
+        }
+        else
+        {
+            player->setAcceleration(0.0f, GRAVITY / 4);
+        }
+    }
+
+    for (PhysicsObject *obj : objects)
+    {
+        if (obj != player)
+            obj->update(deltaTime);
     }
 }
 
 void MainScreen::display()
 {
-    for (StaticObject &platform : platforms)
+    PhysicsObject *player = getPlayer();
+    if (player)
     {
-        platform.draw();
+        float camX = player->getX();
+        float camY = player->getY();
+
+        glLoadIdentity();
+        gluLookAt(camX, camY, 1.0f, camX, camY, 0.0f, 0.0f, 1.0f, 0.0f);
+    }
+    else
+    {
+        glLoadIdentity();
+        gluLookAt(0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
     }
 
-    for (PhysicsObject &obj : objects)
+    for (StaticObject *platform : platforms)
     {
-        obj.draw();
+        platform->draw();
+    }
+
+    for (PhysicsObject *obj : objects)
+    {
+        obj->draw();
     }
 }
 
@@ -64,14 +166,18 @@ PhysicsObject *MainScreen::getPlayer()
 {
     if (objects.empty())
         return nullptr;
-    return &objects[0]; // Assuming the first object is the player
+    return objects[0]; // Assuming the first object is the player
 }
 
-void MainScreen::handleKeyboard(unsigned char key, int x, int y)
+void MainScreen::handleKeyboardUp(unsigned char key, int x, int y)
 {
 }
 
-void MainScreen::handleSpecialKeys(int key, int x, int y)
+void MainScreen::handleKeyboardDown(unsigned char key, int x, int y)
+{
+}
+
+void MainScreen::handleSpecialKeysDown(int key, int x, int y)
 {
     PhysicsObject *player = getPlayer();
     if (!player)
@@ -80,16 +186,31 @@ void MainScreen::handleSpecialKeys(int key, int x, int y)
     switch (key)
     {
     case GLUT_KEY_LEFT:
-        player->moveLeft(MOVEMENT_SPEED);
+        player->setVelocity(-MOVEMENT_SPEED, player->getVelocityY());
         break;
     case GLUT_KEY_RIGHT:
-        player->moveRight(MOVEMENT_SPEED);
+        player->setVelocity(MOVEMENT_SPEED, player->getVelocityY());
         break;
     case GLUT_KEY_UP:
-        player->setVelocity(player->getVelocityX(), 20.0f);
+        if (player->getIsGrounded())
+        {
+            player->setVelocity(player->getVelocityX(), 12.0f);
+        }
         break;
-    case GLUT_KEY_DOWN:
-        player->moveDown(MOVEMENT_SPEED);
+    }
+}
+
+void MainScreen::handleSpecialKeysUp(int key, int x, int y)
+{
+    PhysicsObject *player = getPlayer();
+    if (!player)
+        return;
+
+    switch (key)
+    {
+    case GLUT_KEY_LEFT:
+    case GLUT_KEY_RIGHT:
+        player->setVelocity(0.0f, player->getVelocityY());
         break;
     }
 }

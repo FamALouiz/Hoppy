@@ -21,11 +21,19 @@ void GameScreen::display()
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void GameScreen::handleKeyboard(unsigned char key, int x, int y)
+void GameScreen::handleKeyboardUp(unsigned char key, int x, int y)
 {
 }
 
-void GameScreen::handleSpecialKeys(int key, int x, int y)
+void GameScreen::handleKeyboardDown(unsigned char key, int x, int y)
+{
+}
+
+void GameScreen::handleSpecialKeysUp(int key, int x, int y)
+{
+}
+
+void GameScreen::handleSpecialKeysDown(int key, int x, int y)
 {
 }
 
