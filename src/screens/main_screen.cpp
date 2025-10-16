@@ -59,8 +59,25 @@ void MainScreen::init()
         glVertex2f(x - 0.2f, y + 0.05f);
         glEnd();
     };
+
     StaticObject *ground = new StaticObject(0.0f, -0.8f, platformDrawFunc);
     ground->setCollisionBox(0.4f, 0.1f);
+    addPlatform(ground);
+
+    StaticObject *platform1 = new StaticObject(-0.6f, -0.4f, platformDrawFunc);
+    platform1->setCollisionBox(0.4f, 0.1f);
+    addPlatform(platform1);
+
+    StaticObject *platform2 = new StaticObject(0.6f, -0.2f, platformDrawFunc);
+    platform2->setCollisionBox(0.4f, 0.1f);
+    addPlatform(platform2);
+
+    StaticObject *platform3 = new StaticObject(-0.3f, 0.2f, platformDrawFunc);
+    platform3->setCollisionBox(0.4f, 0.1f);
+    addPlatform(platform3);
+
+    StaticObject *platform4 = new StaticObject(0.8f, 0.4f, platformDrawFunc);
+    platform4->setCollisionBox(0.4f, 0.1f);
     addPlatform(ground);
 }
 
