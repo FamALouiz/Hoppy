@@ -4,12 +4,12 @@
 #include "physics/objects.h"
 #include <vector>
 
-#define SCREEN_SECTIONS 3
+#define SCREEN_SECTIONS 5
 #define PLATFORM_SPACING 0.5f
 #define PLATFORM_WIDTH 0.4f
 #define PLATFORM_HEIGHT 0.1f
-#define SCREEN_LEFT -1.0f
-#define SCREEN_RIGHT 1.0f
+#define SCREEN_LEFT -0.75f
+#define SCREEN_RIGHT 0.75f
 #define SCREEN_BOTTOM -1.0f
 #define SCREEN_TOP 1.0f
 #define GENERATION_AHEAD 10.0f
