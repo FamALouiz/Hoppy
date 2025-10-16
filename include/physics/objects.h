@@ -4,6 +4,8 @@
 #include <GL/glut.h>
 #include <vector>
 
+class CollisionBox;
+
 class _Object
 {
 protected:
@@ -24,7 +26,23 @@ public:
     }
 };
 
-class PhysicsObject : public _Object
+class _CollisionObject : public _Object
+{
+protected:
+    CollisionBox *collisionBox;
+
+public:
+    _CollisionObject(float x, float y, void (*drawFunc)(float, float));
+    virtual ~_CollisionObject();
+
+    CollisionBox *getCollisionBox() const { return collisionBox; }
+    void setCollisionBox(float width, float height);
+    void setCollisionCircle(float radius);
+    bool isColliding();
+    std::vector<_Object *> getCollidingObjects();
+};
+
+class PhysicsObject : public _CollisionObject
 {
 private:
     float velocityX, velocityY;
@@ -55,7 +73,7 @@ public:
     void draw();
 };
 
-class StaticObject : public _Object
+class StaticObject : public _CollisionObject
 {
 public:
     StaticObject(float x, float y, void (*drawFunc)(float, float));
