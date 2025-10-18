@@ -268,20 +268,20 @@ void MainScreen::handleSpecialKeysDown(int key, int x, int y)
     if (!player)
         return;
 
-    switch (key)
+    if (key == GLUT_KEY_LEFT)
     {
-    case GLUT_KEY_LEFT:
         player->setVelocity(-MOVEMENT_SPEED, player->getVelocityY());
-        break;
-    case GLUT_KEY_RIGHT:
+    }
+    if (key == GLUT_KEY_RIGHT)
+    {
         player->setVelocity(MOVEMENT_SPEED, player->getVelocityY());
-        break;
-    case GLUT_KEY_UP:
+    }
+    if (key == GLUT_KEY_UP)
+    {
         if (player->getIsGrounded())
         {
             player->setVelocity(player->getVelocityX(), JUMP_SPEED);
         }
-        break;
     }
 }
 
@@ -291,11 +291,8 @@ void MainScreen::handleSpecialKeysUp(int key, int x, int y)
     if (!player)
         return;
 
-    switch (key)
+    if (key == GLUT_KEY_LEFT || key == GLUT_KEY_RIGHT)
     {
-    case GLUT_KEY_LEFT:
-    case GLUT_KEY_RIGHT:
         player->setVelocity(0.0f, player->getVelocityY());
-        break;
     }
 }
