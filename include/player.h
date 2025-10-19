@@ -24,6 +24,7 @@ private:
     bool isUsingJetpack = false;
     int lives = 3;
     int keys = 0;
+    bool hasSuperKey = false;
 
     static void defaultDrawFunc(float x, float y);
 
@@ -52,6 +53,8 @@ public:
     void setUsingJetpack(bool usingJetpack) { isUsingJetpack = usingJetpack; }
     int getKeys() const { return keys; }
     void addKey() { keys++; }
+    bool getHasSuperKey() const { return hasSuperKey; }
+    void setSuperKey(bool superKey) { hasSuperKey = superKey; }
 };
 
 #endif

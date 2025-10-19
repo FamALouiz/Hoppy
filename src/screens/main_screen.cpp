@@ -1,11 +1,12 @@
 #include <GL/glut.h>
 #include "screens/main_screen.h"
 #include "screens/end_screen.h"
+#include "screens/win_screen.h"
 #include "game_window/game_window.h"
 #include "physics/core.h"
 #include <iostream>
 
-MainScreen::MainScreen() : platformGenerator(nullptr), meteorGenerator(nullptr), powerupGenerator(nullptr), player(nullptr), lava(nullptr)
+MainScreen::MainScreen() : platformGenerator(nullptr), meteorGenerator(nullptr), powerupGenerator(nullptr), player(nullptr), lava(nullptr), gate(nullptr)
 {
 }
 
@@ -21,6 +22,12 @@ MainScreen::~MainScreen()
     {
         delete lava;
         lava = nullptr;
+    }
+
+    if (gate)
+    {
+        delete gate;
+        gate = nullptr;
     }
 
     for (PhysicsObject *obj : objects)
@@ -149,16 +156,37 @@ void MainScreen::update(float deltaTime)
 
         if (meteorGenerator)
         {
-            meteorGenerator->generateMeteors(meteors, player->getY());
+            if (!powerupGenerator || !powerupGenerator->hasSuperKeyGenerated())
+            {
+                meteorGenerator->generateMeteors(meteors, player->getY());
+            }
         }
 
         if (powerupGenerator)
         {
             powerupGenerator->generatePowerups(powerups, platforms, player->getY());
+
+            if (powerupGenerator->hasSuperKeyGenerated() && !gate)
+            {
+                gate = new Gate(0.0f, player->getY() + GATE_DISTANCE_ABOVE_PLAYER);
+                platforms.push_back(gate);
+            }
         }
 
         std::vector<_Object *> collisions = player->getCollidingObjects();
         player->handleCollisions(collisions);
+
+        if (gate && player->getHasSuperKey())
+        {
+            if (player->getCollisionBox() && gate->getCollisionBox())
+            {
+                if (CollisionDetector::getInstance()->checkCollision(player->getCollisionBox(), gate->getCollisionBox()))
+                {
+                    WinScreen *winScreen = new WinScreen();
+                    GameWindow::getInstance()->setScreen(winScreen);
+                }
+            }
+        }
 
         for (auto it = powerups.begin(); it != powerups.end();)
         {

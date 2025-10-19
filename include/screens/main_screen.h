@@ -7,6 +7,7 @@
 #include "physics/objects.h"
 #include "player.h"
 #include "platform.h"
+#include "gate.h"
 #include "lava.h"
 #include "generators/platform_generator.h"
 #include "generators/meteor_generator.h"
@@ -14,6 +15,8 @@
 #include "generators/powerup_manager.h"
 #include "generators/powerups/powerups.h"
 #include <vector>
+
+#define GATE_DISTANCE_ABOVE_PLAYER 15.0f
 
 class MainScreen : public GameScreen
 {
@@ -27,6 +30,7 @@ private:
     PowerupGenerator *powerupGenerator;
     Player *player;
     Lava *lava;
+    Gate *gate;
 
 public:
     MainScreen();

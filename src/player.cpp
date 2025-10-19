@@ -145,6 +145,8 @@ void Player::handleCollisions(const std::vector<_Object *> &collisions)
         else if (typeid(*obj) == typeid(Lava) && !getIsInvincible())
         {
             loseLife();
+            loseLife();
+            loseLife();
             PowerupManager::getInstance()->activateDamageShield();
             std::cout << "Player hit by lava! Lives left: " << getLives() << std::endl;
         }
