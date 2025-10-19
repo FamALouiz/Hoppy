@@ -63,7 +63,7 @@ void PowerupGenerator::generatePowerups(std::vector<Powerup *> &powerups, std::v
                     }
                 }
 
-                if (!hasPowerup)
+                if (!hasPowerup && platformY > cameraY * 1.5f) // Only spawn above the camera for better gameplay
                 {
                     PowerupType type = selectRandomPowerup();
                     Powerup *newPowerup = nullptr;

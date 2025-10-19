@@ -3,7 +3,7 @@
 #include "physics/core.h"
 #include <iostream>
 
-MainScreen::MainScreen() : platformGenerator(nullptr), meteorGenerator(nullptr), powerupGenerator(nullptr), powerupManager(nullptr), player(nullptr), lava(nullptr)
+MainScreen::MainScreen() : platformGenerator(nullptr), meteorGenerator(nullptr), powerupGenerator(nullptr), player(nullptr), lava(nullptr)
 {
 }
 
@@ -63,11 +63,7 @@ MainScreen::~MainScreen()
         powerupGenerator = nullptr;
     }
 
-    if (powerupManager)
-    {
-        delete powerupManager;
-        powerupManager = nullptr;
-    }
+    PowerupManager::destroy();
 }
 
 void MainScreen::init()
@@ -132,7 +128,7 @@ void MainScreen::init()
     lava = new Lava(0.0f, SCREEN_BOTTOM - LAVA_HEIGHT / 2.0f);
 
     powerupGenerator = new PowerupGenerator(player, lava);
-    powerupManager = new PowerupManager();
+    PowerupManager::getInstance()->setPlayer(player);
 }
 
 void MainScreen::update(float deltaTime)
@@ -170,7 +166,7 @@ void MainScreen::update(float deltaTime)
                 if (CollisionDetector::getInstance()->checkCollision(player->getCollisionBox(), powerup->getCollisionBox()))
                 {
                     powerup->setCollected(true);
-                    powerupManager->addPowerup(powerup);
+                    PowerupManager::getInstance()->addPowerup(powerup);
                     it = powerups.erase(it);
                     continue;
                 }
@@ -179,10 +175,7 @@ void MainScreen::update(float deltaTime)
         }
     }
 
-    if (powerupManager)
-    {
-        powerupManager->update(deltaTime);
-    }
+    PowerupManager::getInstance()->update(deltaTime);
 
     if (lava)
     {

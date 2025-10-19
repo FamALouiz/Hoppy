@@ -1,12 +1,33 @@
 #include "generators/powerup_manager.h"
+#include "player.h"
 
-PowerupManager::PowerupManager()
+PowerupManager *PowerupManager::instance = nullptr;
+
+PowerupManager::PowerupManager() : player(nullptr), damageInvincibilityTimer(0.0f)
 {
 }
 
 PowerupManager::~PowerupManager()
 {
     clear();
+}
+
+PowerupManager *PowerupManager::getInstance()
+{
+    if (instance == nullptr)
+    {
+        instance = new PowerupManager();
+    }
+    return instance;
+}
+
+void PowerupManager::destroy()
+{
+    if (instance != nullptr)
+    {
+        delete instance;
+        instance = nullptr;
+    }
 }
 
 void PowerupManager::addPowerup(Powerup *powerup)
@@ -17,8 +38,30 @@ void PowerupManager::addPowerup(Powerup *powerup)
     }
 }
 
+void PowerupManager::activateDamageShield()
+{
+    if (player)
+    {
+        damageInvincibilityTimer = DAMAGE_INVINCIBILITY_DURATION;
+        player->setInvincible(true);
+    }
+}
+
 void PowerupManager::update(float deltaTime)
 {
+    if (damageInvincibilityTimer > 0.0f)
+    {
+        damageInvincibilityTimer -= deltaTime;
+        if (damageInvincibilityTimer <= 0.0f)
+        {
+            damageInvincibilityTimer = 0.0f;
+            if (player)
+            {
+                player->setInvincible(false);
+            }
+        }
+    }
+
     for (auto it = activePowerups.begin(); it != activePowerups.end();)
     {
         if (!it->isActivated)

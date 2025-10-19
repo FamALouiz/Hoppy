@@ -8,7 +8,7 @@
 #include "platform.h"
 #include <vector>
 
-#define POWERUP_CHECK_DISTANCE 0.2f
+#define POWERUP_CHECK_DISTANCE 0.5f
 
 class Player;
 class Lava;

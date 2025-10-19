@@ -25,7 +25,6 @@ private:
     PlatformGenerator *platformGenerator;
     MeteorGenerator *meteorGenerator;
     PowerupGenerator *powerupGenerator;
-    PowerupManager *powerupManager;
     Player *player;
     Lava *lava;
 

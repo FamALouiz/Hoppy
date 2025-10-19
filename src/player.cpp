@@ -2,6 +2,7 @@
 #include <iostream>
 #include "platform.h"
 #include <lava.h>
+#include "generators/powerup_manager.h"
 
 void Player::defaultDrawFunc(float x, float y)
 {
@@ -144,16 +145,14 @@ void Player::handleCollisions(const std::vector<_Object *> &collisions)
         }
         else if (typeid(*obj) == typeid(Lava) && !getIsInvincible())
         {
-            // Collision with lava
             loseLife();
-            setInvincible(true);
+            PowerupManager::getInstance()->activateDamageShield();
             std::cout << "Player hit by lava! Lives left: " << getLives() << std::endl;
         }
-        else if (typeid(*obj) == typeid(PhysicsObject) && !getIsInvincible()) // Can not collide when invincible
+        else if (typeid(*obj) == typeid(PhysicsObject) && !getIsInvincible())
         {
-            // Collision with a meteor
             loseLife();
-            setInvincible(true);
+            PowerupManager::getInstance()->activateDamageShield();
             std::cout << "Player hit by meteor! Lives left: " << getLives() << std::endl;
         }
     }
