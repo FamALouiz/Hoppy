@@ -9,6 +9,7 @@
 #include "platform.h"
 #include "gate.h"
 #include "lava.h"
+#include "background.h"
 #include "generators/platform_generator.h"
 #include "generators/meteor_generator.h"
 #include "generators/powerup_generator.h"
@@ -31,6 +32,7 @@ private:
     Player *player;
     Lava *lava;
     Gate *gate;
+    Background *background;
 
 public:
     MainScreen();

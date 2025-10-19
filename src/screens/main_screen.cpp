@@ -6,7 +6,7 @@
 #include "physics/core.h"
 #include <iostream>
 
-MainScreen::MainScreen() : platformGenerator(nullptr), meteorGenerator(nullptr), powerupGenerator(nullptr), player(nullptr), lava(nullptr), gate(nullptr)
+MainScreen::MainScreen() : platformGenerator(nullptr), meteorGenerator(nullptr), powerupGenerator(nullptr), player(nullptr), lava(nullptr), gate(nullptr), background(nullptr)
 {
 }
 
@@ -28,6 +28,12 @@ MainScreen::~MainScreen()
     {
         delete gate;
         gate = nullptr;
+    }
+
+    if (background)
+    {
+        delete background;
+        background = nullptr;
     }
 
     for (PhysicsObject *obj : objects)
@@ -85,6 +91,8 @@ void MainScreen::init()
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    background = new Background();
 
     player = new Player(0.0f, 0.0f);
 
@@ -231,13 +239,28 @@ void MainScreen::update(float deltaTime)
 
 void MainScreen::display()
 {
+    float camY = 0.0f;
+
     if (player)
     {
-        float camY = player->getY();
+        camY = player->getY();
 
         glLoadIdentity();
         gluLookAt(0.0f, camY, 1.0f, 0.0f, camY, 0.0f, 0.0f, 1.0f, 0.0f);
+    }
+    else
+    {
+        glLoadIdentity();
+        gluLookAt(0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+    }
 
+    if (background)
+    {
+        background->draw(camY);
+    }
+
+    if (player)
+    {
         if (player->getIsInvincible())
         {
             glColor4f(1.0f, 1.0f, 0.0f, 0.5f);
@@ -248,11 +271,6 @@ void MainScreen::display()
             glColor3f(PLAYER_COLOR_R, PLAYER_COLOR_G, PLAYER_COLOR_B);
             player->draw();
         }
-    }
-    else
-    {
-        glLoadIdentity();
-        gluLookAt(0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
     }
 
     for (Platform *platform : platforms)

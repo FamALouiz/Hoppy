@@ -7,8 +7,8 @@
 
 #define SCREEN_SECTIONS 5
 #define PLATFORM_SPACING 0.5f
-#define SCREEN_LEFT -0.75f
-#define SCREEN_RIGHT 0.75f
+#define SCREEN_LEFT -0.5f
+#define SCREEN_RIGHT 0.5f
 #define SCREEN_BOTTOM -1.0f
 #define SCREEN_TOP 1.0f
 #define GENERATION_AHEAD 10.0f
