@@ -27,7 +27,7 @@ bool PowerupGenerator::shouldSpawnPowerup(float spawnRate)
 
 PowerupType PowerupGenerator::selectRandomPowerup()
 {
-    int random = rand() % 3;
+    int random = rand() % 4;
     switch (random)
     {
     case 0:
@@ -36,6 +36,8 @@ PowerupType PowerupGenerator::selectRandomPowerup()
         return POWERUP_LAVA_FREEZE;
     case 2:
         return POWERUP_SHIELD;
+    case 3:
+        return POWERUP_KEY;
     default:
         return POWERUP_JETPACK;
     }
@@ -82,6 +84,10 @@ void PowerupGenerator::generatePowerups(std::vector<Powerup *> &powerups, std::v
                     case POWERUP_SHIELD:
                         newPowerup = new Shield(platform->getX(), platformY + 0.15f, player);
                         spawnRate = SHIELD_SPAWN_RATE;
+                        break;
+                    case POWERUP_KEY:
+                        newPowerup = new Key(platform->getX(), platformY + 0.15f, player);
+                        spawnRate = KEY_SPAWN_RATE;
                         break;
                     }
 

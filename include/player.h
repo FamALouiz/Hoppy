@@ -23,6 +23,7 @@ private:
     bool isInvincible = false;
     bool isUsingJetpack = false;
     int lives = 3;
+    int keys = 0;
 
     static void defaultDrawFunc(float x, float y);
 
@@ -49,6 +50,8 @@ public:
     void setInvincible(bool invincible) { isInvincible = invincible; }
     bool getIsUsingJetpack() const { return isUsingJetpack; }
     void setUsingJetpack(bool usingJetpack) { isUsingJetpack = usingJetpack; }
+    int getKeys() const { return keys; }
+    void addKey() { keys++; }
 };
 
 #endif

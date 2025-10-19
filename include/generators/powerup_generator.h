@@ -5,6 +5,7 @@
 #include "generators/powerups/jetpack.h"
 #include "generators/powerups/lava_freeze.h"
 #include "generators/powerups/shield.h"
+#include "generators/powerups/key.h"
 #include "platform.h"
 #include <vector>
 

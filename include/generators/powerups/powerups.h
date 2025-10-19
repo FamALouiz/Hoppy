@@ -10,7 +10,8 @@ enum PowerupType
 {
     POWERUP_JETPACK,
     POWERUP_LAVA_FREEZE,
-    POWERUP_SHIELD
+    POWERUP_SHIELD,
+    POWERUP_KEY
 };
 
 class Powerup : public StaticObject
