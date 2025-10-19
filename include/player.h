@@ -21,6 +21,7 @@ private:
     bool moveRight;
     bool canJump;
     bool isInvincible = false;
+    bool isUsingJetpack = false;
     int lives = 3;
 
     static void defaultDrawFunc(float x, float y);
@@ -46,6 +47,8 @@ public:
     int getLives() const { return lives; }
     bool getIsInvincible() const { return isInvincible; }
     void setInvincible(bool invincible) { isInvincible = invincible; }
+    bool getIsUsingJetpack() const { return isUsingJetpack; }
+    void setUsingJetpack(bool usingJetpack) { isUsingJetpack = usingJetpack; }
 };
 
 #endif
