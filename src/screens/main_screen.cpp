@@ -155,7 +155,7 @@ void MainScreen::update(float deltaTime)
         player->updateControls(deltaTime);
         player->update(deltaTime);
 
-        player->checkBoundaries(SCREEN_LEFT, SCREEN_RIGHT);
+        player->checkBoundaries(SCREEN_LEFT - 0.1f, SCREEN_RIGHT + 0.1f);
 
         if (platformGenerator)
         {
