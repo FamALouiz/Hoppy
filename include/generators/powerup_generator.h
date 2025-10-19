@@ -6,10 +6,12 @@
 #include "generators/powerups/lava_freeze.h"
 #include "generators/powerups/shield.h"
 #include "generators/powerups/key.h"
+#include "generators/powerups/super_key.h"
 #include "platform.h"
 #include <vector>
 
 #define POWERUP_CHECK_DISTANCE 0.5f
+#define KEYS_NEEDED_FOR_SUPER_KEY 1
 
 class Player;
 class Lava;
@@ -21,6 +23,7 @@ private:
     Lava *lava;
     float lastCheckedHeight;
     float checkInterval;
+    bool superKeyGenerated;
 
     bool shouldSpawnPowerup(float spawnRate);
     PowerupType selectRandomPowerup();
@@ -30,6 +33,7 @@ public:
     ~PowerupGenerator();
 
     void generatePowerups(std::vector<Powerup *> &powerups, std::vector<Platform *> &platforms, float cameraY);
+    bool hasSuperKeyGenerated() const { return superKeyGenerated; }
 };
 
 #endif

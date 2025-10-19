@@ -18,7 +18,7 @@ void Key::defaultDrawFunc(float x, float y)
 }
 
 Key::Key(float x, float y, Player *player)
-    : Powerup(x, y, POWERUP_KEY, KEY_SPAWN_RATE, 0.0f, Key::defaultDrawFunc)
+    : Powerup(x, y, POWERUP_KEY, KEY_SPAWN_RATE, 0.0f, Key::defaultDrawFunc), player(player)
 {
 }
 

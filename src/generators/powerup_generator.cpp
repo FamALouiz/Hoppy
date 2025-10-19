@@ -3,9 +3,11 @@
 #include "lava.h"
 #include <cstdlib>
 #include <ctime>
+#include <iostream>
+#include <generators/powerup_manager.h>
 
 PowerupGenerator::PowerupGenerator(Player *player, Lava *lava, float checkInterval)
-    : player(player), lava(lava), checkInterval(checkInterval), lastCheckedHeight(0.0f)
+    : player(player), lava(lava), checkInterval(checkInterval), lastCheckedHeight(0.0f), superKeyGenerated(false)
 {
     static bool seeded = false;
     if (!seeded)
@@ -45,6 +47,42 @@ PowerupType PowerupGenerator::selectRandomPowerup()
 
 void PowerupGenerator::generatePowerups(std::vector<Powerup *> &powerups, std::vector<Platform *> &platforms, float cameraY)
 {
+    if (superKeyGenerated)
+    {
+        return;
+    }
+
+    if (player && player->getKeys() >= KEYS_NEEDED_FOR_SUPER_KEY && !player->getHasSuperKey())
+    {
+        for (Platform *platform : platforms)
+        {
+            float platformY = platform->getY();
+            if (platformY > cameraY + 5.0f)
+            {
+                bool hasPowerup = false;
+                for (Powerup *powerup : powerups)
+                {
+                    float distance = abs(powerup->getX() - platform->getX()) + abs(powerup->getY() - platformY);
+                    if (distance < POWERUP_CHECK_DISTANCE)
+                    {
+                        hasPowerup = true;
+                        break;
+                    }
+                }
+
+                if (!hasPowerup)
+                {
+                    std::cout << "Spawning Super Key at platform Y: " << platformY << std::endl;
+                    PowerupManager::getInstance()->clear();
+                    SuperKey *superKey = new SuperKey(platform->getX(), platformY + 0.25f, player);
+                    powerups.push_back(superKey);
+                    superKeyGenerated = true;
+                    return;
+                }
+            }
+        }
+    }
+
     if (cameraY - lastCheckedHeight >= checkInterval)
     {
         lastCheckedHeight = cameraY;
