@@ -1,6 +1,7 @@
 #include "player.h"
 #include <iostream>
 #include "platform.h"
+#include <lava.h>
 
 void Player::defaultDrawFunc(float x, float y)
 {
@@ -141,12 +142,19 @@ void Player::handleCollisions(const std::vector<_Object *> &collisions)
                 setVelocity(0.0f, getVelocityY());
             }
         }
-        else if (typeid(*obj) == typeid(PhysicsObject) && !getIsInvincible()) // Can not collide when invincible
+        else if (typeid(*obj) == typeid(Lava) && !getIsInvincible())
         {
-            // Collision with a meteor or lava
+            // Collision with lava
             loseLife();
             setInvincible(true);
-            std::cout << "Player hit by hazard! Lives left: " << getLives() << std::endl;
+            std::cout << "Player hit by lava! Lives left: " << getLives() << std::endl;
+        }
+        else if (typeid(*obj) == typeid(PhysicsObject) && !getIsInvincible()) // Can not collide when invincible
+        {
+            // Collision with a meteor
+            loseLife();
+            setInvincible(true);
+            std::cout << "Player hit by meteor! Lives left: " << getLives() << std::endl;
         }
     }
 
