@@ -10,9 +10,17 @@
 #define PLATFORM_COLOR_G 0.3f
 #define PLATFORM_COLOR_B 0.1f
 
+#define PLATFORM_SPRITE_COLS 16
+#define PLATFORM_SPRITE_ROWS 16
+#define PLATFORM_SPRITE_INDEX 0
+#define PLATFORM_SPRITE_PATH "C:\\Users\\fam\\OneDrive\\Desktop\\GIU\\Semester 7\\Graphics\\Hoppy\\assets\\sprites\\world_tileset.png"
+
 class Platform : public StaticObject
 {
 private:
+    static GLuint spriteTexture;
+    static bool textureLoaded;
+    static void loadTexture();
     static void defaultDrawFunc(float x, float y);
 
 public:
@@ -24,6 +32,7 @@ public:
 
     static float getDefaultWidth() { return PLATFORM_WIDTH; }
     static float getDefaultHeight() { return PLATFORM_HEIGHT; }
+    static void cleanupTexture();
 };
 
 #endif

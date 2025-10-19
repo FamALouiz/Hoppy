@@ -31,7 +31,7 @@ void PlatformGenerator::generatePlatforms(std::vector<Platform *> &platforms, fl
             section = (section + 1) % sections;
         float xPos = getSectionCenter(section);
 
-        Platform *platform = new Platform(xPos, lastGeneratedHeight, platformWidth, platformHeight, platformDrawFunc);
+        Platform *platform = new Platform(xPos, lastGeneratedHeight, platformWidth, platformHeight);
         platforms.push_back(platform);
 
         lastSection = section;
