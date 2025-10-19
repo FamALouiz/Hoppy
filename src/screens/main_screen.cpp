@@ -3,7 +3,7 @@
 #include "physics/core.h"
 #include <iostream>
 
-MainScreen::MainScreen() : platformGenerator(nullptr), meteorGenerator(nullptr), player(nullptr), lava(nullptr)
+MainScreen::MainScreen() : platformGenerator(nullptr), meteorGenerator(nullptr), powerupGenerator(nullptr), powerupManager(nullptr), player(nullptr), lava(nullptr)
 {
 }
 
@@ -33,6 +33,12 @@ MainScreen::~MainScreen()
     }
     meteors.clear();
 
+    for (Powerup *powerup : powerups)
+    {
+        delete powerup;
+    }
+    powerups.clear();
+
     for (Platform *platform : platforms)
     {
         delete platform;
@@ -49,6 +55,18 @@ MainScreen::~MainScreen()
     {
         delete meteorGenerator;
         meteorGenerator = nullptr;
+    }
+
+    if (powerupGenerator)
+    {
+        delete powerupGenerator;
+        powerupGenerator = nullptr;
+    }
+
+    if (powerupManager)
+    {
+        delete powerupManager;
+        powerupManager = nullptr;
     }
 }
 
@@ -111,7 +129,10 @@ void MainScreen::init()
         METEOR_BATCH_SIZE,
         meteorDrawFunc);
 
-    lava = new Lava(0.0f, SCREEN_BOTTOM - LAVA_HEIGHT / 1.5f);
+    lava = new Lava(0.0f, SCREEN_BOTTOM - LAVA_HEIGHT / 2.0f);
+
+    powerupGenerator = new PowerupGenerator(player, lava);
+    powerupManager = new PowerupManager();
 }
 
 void MainScreen::update(float deltaTime)
@@ -133,8 +154,34 @@ void MainScreen::update(float deltaTime)
             meteorGenerator->generateMeteors(meteors, player->getY());
         }
 
+        if (powerupGenerator)
+        {
+            powerupGenerator->generatePowerups(powerups, platforms, player->getY());
+        }
+
         std::vector<_Object *> collisions = player->getCollidingObjects();
         player->handleCollisions(collisions);
+
+        for (auto it = powerups.begin(); it != powerups.end();)
+        {
+            Powerup *powerup = *it;
+            if (!powerup->getIsCollected() && player->getCollisionBox() && powerup->getCollisionBox())
+            {
+                if (CollisionDetector::getInstance()->checkCollision(player->getCollisionBox(), powerup->getCollisionBox()))
+                {
+                    powerup->setCollected(true);
+                    powerupManager->addPowerup(powerup);
+                    it = powerups.erase(it);
+                    continue;
+                }
+            }
+            ++it;
+        }
+    }
+
+    if (powerupManager)
+    {
+        powerupManager->update(deltaTime);
     }
 
     if (lava)
@@ -182,6 +229,11 @@ void MainScreen::display()
     for (Platform *platform : platforms)
     {
         platform->draw();
+    }
+
+    for (Powerup *powerup : powerups)
+    {
+        powerup->draw();
     }
 
     if (lava)

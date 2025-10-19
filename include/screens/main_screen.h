@@ -10,6 +10,9 @@
 #include "lava.h"
 #include "generators/platform_generator.h"
 #include "generators/meteor_generator.h"
+#include "generators/powerup_generator.h"
+#include "generators/powerup_manager.h"
+#include "generators/powerups/powerups.h"
 #include <vector>
 
 class MainScreen : public GameScreen
@@ -18,8 +21,11 @@ private:
     std::vector<Platform *> platforms;
     std::vector<PhysicsObject *> objects;
     std::vector<PhysicsObject *> meteors;
+    std::vector<Powerup *> powerups;
     PlatformGenerator *platformGenerator;
     MeteorGenerator *meteorGenerator;
+    PowerupGenerator *powerupGenerator;
+    PowerupManager *powerupManager;
     Player *player;
     Lava *lava;
 
@@ -30,6 +36,7 @@ public:
     void addPlatform(Platform *platform) { platforms.push_back(platform); }
     void addObject(PhysicsObject *obj) { objects.push_back(obj); }
     void addMeteor(PhysicsObject *meteor) { meteors.push_back(meteor); }
+    void addPowerup(Powerup *powerup) { powerups.push_back(powerup); }
     Player *getPlayer();
     Lava *getLava();
     void init() override;
