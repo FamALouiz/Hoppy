@@ -7,6 +7,7 @@
 #include "physics/objects.h"
 #include "player.h"
 #include "platform.h"
+#include "lava.h"
 #include "generators/platform_generator.h"
 #include "generators/meteor_generator.h"
 #include <vector>
@@ -20,6 +21,7 @@ private:
     PlatformGenerator *platformGenerator;
     MeteorGenerator *meteorGenerator;
     Player *player;
+    Lava *lava;
 
 public:
     MainScreen();
@@ -29,6 +31,7 @@ public:
     void addObject(PhysicsObject *obj) { objects.push_back(obj); }
     void addMeteor(PhysicsObject *meteor) { meteors.push_back(meteor); }
     Player *getPlayer();
+    Lava *getLava();
     void init() override;
     void update(float deltaTime) override;
     void display() override;

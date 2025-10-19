@@ -3,7 +3,7 @@
 #include "physics/core.h"
 #include <iostream>
 
-MainScreen::MainScreen() : platformGenerator(nullptr), meteorGenerator(nullptr), player(nullptr)
+MainScreen::MainScreen() : platformGenerator(nullptr), meteorGenerator(nullptr), player(nullptr), lava(nullptr)
 {
 }
 
@@ -13,6 +13,12 @@ MainScreen::~MainScreen()
     {
         delete player;
         player = nullptr;
+    }
+
+    if (lava)
+    {
+        delete lava;
+        lava = nullptr;
     }
 
     for (PhysicsObject *obj : objects)
@@ -104,6 +110,8 @@ void MainScreen::init()
         METEOR_GRAVITY,
         METEOR_BATCH_SIZE,
         meteorDrawFunc);
+
+    lava = new Lava(0.0f, SCREEN_BOTTOM);
 }
 
 void MainScreen::update(float deltaTime)
@@ -129,6 +137,11 @@ void MainScreen::update(float deltaTime)
         player->handleCollisions(collisions);
     }
 
+    if (lava)
+    {
+        lava->updateLava(deltaTime);
+    }
+
     for (PhysicsObject *obj : objects)
     {
         if (obj != player)
@@ -150,7 +163,15 @@ void MainScreen::display()
         glLoadIdentity();
         gluLookAt(0.0f, camY, 1.0f, 0.0f, camY, 0.0f, 0.0f, 1.0f, 0.0f);
 
-        player->draw();
+        if (player->getIsInvincible())
+        {
+            glColor4f(1.0f, 1.0f, 0.0f, 0.5f);
+            player->draw();
+        }
+        else
+        {
+            player->draw();
+        }
     }
     else
     {
@@ -161,6 +182,11 @@ void MainScreen::display()
     for (Platform *platform : platforms)
     {
         platform->draw();
+    }
+
+    if (lava)
+    {
+        lava->draw();
     }
 
     for (PhysicsObject *meteor : meteors)
@@ -177,6 +203,11 @@ void MainScreen::display()
 Player *MainScreen::getPlayer()
 {
     return player;
+}
+
+Lava *MainScreen::getLava()
+{
+    return lava;
 }
 
 void MainScreen::handleKeyboardUp(unsigned char key, int x, int y)
