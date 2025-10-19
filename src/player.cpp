@@ -3,15 +3,82 @@
 #include "platform.h"
 #include <lava.h>
 #include "generators/powerup_manager.h"
+#include "stb_image.h"
+
+GLuint Player::spriteTexture = 0;
+bool Player::textureLoaded = false;
+
+void Player::loadTexture()
+{
+    if (textureLoaded)
+        return;
+
+    int width, height, channels;
+    unsigned char *data = nullptr;
+
+    data = stbi_load(PLAYER_SPRITE_PATH, &width, &height, &channels, 4);
+    if (!data)
+    {
+        std::cerr << "Failed to load player texture from all paths" << std::endl;
+        std::cerr << "STB Error: " << stbi_failure_reason() << std::endl;
+        return;
+    }
+
+    glGenTextures(1, &spriteTexture);
+    glBindTexture(GL_TEXTURE_2D, spriteTexture);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+    stbi_image_free(data);
+    textureLoaded = true;
+}
 
 void Player::defaultDrawFunc(float x, float y)
 {
+    if (!textureLoaded)
+        loadTexture();
+
+    if (!textureLoaded)
+    {
+        glBegin(GL_QUADS);
+        glColor3f(PLAYER_COLOR_R, PLAYER_COLOR_G, PLAYER_COLOR_B);
+        glVertex2f(x - PLAYER_WIDTH / 2, y - PLAYER_HEIGHT / 2);
+        glVertex2f(x + PLAYER_WIDTH / 2, y - PLAYER_HEIGHT / 2);
+        glVertex2f(x + PLAYER_WIDTH / 2, y + PLAYER_HEIGHT / 2);
+        glVertex2f(x - PLAYER_WIDTH / 2, y + PLAYER_HEIGHT / 2);
+        glEnd();
+        return;
+    }
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, spriteTexture);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+    int row = PLAYER_SPRITE_INDEX / PLAYER_SPRITE_COLS;
+    int col = PLAYER_SPRITE_INDEX % PLAYER_SPRITE_COLS;
+
+    float texLeft = (float)col / PLAYER_SPRITE_COLS;
+    float texRight = (float)(col + 1) / PLAYER_SPRITE_COLS;
+    float texTop = (float)row / PLAYER_SPRITE_ROWS;
+    float texBottom = (float)(row + 1) / PLAYER_SPRITE_ROWS;
+
     glBegin(GL_QUADS);
-    glVertex2f(x - PLAYER_SIZE, y - PLAYER_SIZE);
-    glVertex2f(x + PLAYER_SIZE, y - PLAYER_SIZE);
-    glVertex2f(x + PLAYER_SIZE, y + PLAYER_SIZE);
-    glVertex2f(x - PLAYER_SIZE, y + PLAYER_SIZE);
+    glTexCoord2f(texLeft, texBottom);
+    glVertex2f(x - PLAYER_WIDTH / 2, y - PLAYER_HEIGHT / 2);
+    glTexCoord2f(texRight, texBottom);
+    glVertex2f(x + PLAYER_WIDTH / 2, y - PLAYER_HEIGHT / 2);
+    glTexCoord2f(texRight, texTop);
+    glVertex2f(x + PLAYER_WIDTH / 2, y + PLAYER_HEIGHT / 2);
+    glTexCoord2f(texLeft, texTop);
+    glVertex2f(x - PLAYER_WIDTH / 2, y + PLAYER_HEIGHT / 2);
     glEnd();
+
+    glDisable(GL_TEXTURE_2D);
 }
 
 Player::Player(float x, float y)
@@ -20,7 +87,7 @@ Player::Player(float x, float y)
 {
     setVelocity(0.0f, 0.0f);
     setAcceleration(0.0f, GRAVITY);
-    setCollisionBox(PLAYER_SIZE * 2.0f, PLAYER_SIZE * 2.0f);
+    setCollisionBox(PLAYER_WIDTH / 2, PLAYER_HEIGHT / 2);
 }
 
 Player::Player(float x, float y, void (*drawFunc)(float, float))
@@ -29,7 +96,7 @@ Player::Player(float x, float y, void (*drawFunc)(float, float))
 {
     setVelocity(0.0f, 0.0f);
     setAcceleration(0.0f, GRAVITY);
-    setCollisionBox(PLAYER_SIZE * 2.0f, PLAYER_SIZE * 2.0f);
+    setCollisionBox(PLAYER_WIDTH / 2, PLAYER_HEIGHT / 2);
 }
 
 Player::~Player()
@@ -184,5 +251,14 @@ void Player::checkBoundaries(float screenLeft, float screenRight)
     {
         setPosition(screenRight - playerWidth, getY());
         setVelocity(0.0f, getVelocityY());
+    }
+}
+
+void Player::cleanupTexture()
+{
+    if (textureLoaded)
+    {
+        glDeleteTextures(1, &spriteTexture);
+        textureLoaded = false;
     }
 }
