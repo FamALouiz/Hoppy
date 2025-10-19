@@ -3,12 +3,18 @@
 #include "physics/core.h"
 #include <iostream>
 
-MainScreen::MainScreen() : platformGenerator(nullptr), meteorGenerator(nullptr)
+MainScreen::MainScreen() : platformGenerator(nullptr), meteorGenerator(nullptr), player(nullptr)
 {
 }
 
 MainScreen::~MainScreen()
 {
+    if (player)
+    {
+        delete player;
+        player = nullptr;
+    }
+
     for (PhysicsObject *obj : objects)
     {
         delete obj;
@@ -51,21 +57,7 @@ void MainScreen::init()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    auto playerDrawFunc = [](float x, float y)
-    {
-        glBegin(GL_QUADS);
-        glColor3f(0.0f, 0.8f, 0.0f);
-        glVertex2f(x - 0.05f, y - 0.05f);
-        glVertex2f(x + 0.05f, y - 0.05f);
-        glVertex2f(x + 0.05f, y + 0.05f);
-        glVertex2f(x - 0.05f, y + 0.05f);
-        glEnd();
-    };
-    PhysicsObject *player = new PhysicsObject(0.0f, 0.0f, 1.5f, 1.5f, playerDrawFunc);
-    player->setVelocity(0.0f, 0.0f);
-    player->setAcceleration(0.0f, GRAVITY);
-    player->setCollisionBox(0.1f, 0.1f);
-    addObject(player);
+    player = new Player(0.0f, 0.0f);
 
     auto platformDrawFunc = [](float x, float y)
     {
@@ -117,24 +109,12 @@ void MainScreen::init()
 
 void MainScreen::update(float deltaTime)
 {
-    PhysicsObject *player = getPlayer();
     if (player)
     {
+        player->updateControls(deltaTime);
         player->update(deltaTime);
 
-        float playerX = player->getX();
-        float playerWidth = player->getCollisionWidth() / 2.0f;
-
-        if (playerX - playerWidth < SCREEN_LEFT)
-        {
-            player->setPosition(SCREEN_LEFT + playerWidth, player->getY());
-            player->setVelocity(0.0f, player->getVelocityY());
-        }
-        else if (playerX + playerWidth > SCREEN_RIGHT)
-        {
-            player->setPosition(SCREEN_RIGHT - playerWidth, player->getY());
-            player->setVelocity(0.0f, player->getVelocityY());
-        }
+        player->checkBoundaries(SCREEN_LEFT, SCREEN_RIGHT);
 
         if (platformGenerator)
         {
@@ -147,60 +127,7 @@ void MainScreen::update(float deltaTime)
         }
 
         std::vector<_Object *> collisions = player->getCollidingObjects();
-        bool grounded = false;
-
-        for (_Object *obj : collisions)
-        {
-            StaticObject *platform = dynamic_cast<StaticObject *>(obj);
-            if (platform)
-            {
-                if (player->isCollidingFromTop(platform))
-                {
-                    float platformTop = platform->getY() + platform->getCollisionHeight() / 2.0f;
-                    player->setPosition(player->getX(), platformTop + player->getCollisionHeight() / 2.0f);
-
-                    if (player->getVelocityY() < 0)
-                    {
-                        player->setVelocity(player->getVelocityX(), 0.0f);
-                    }
-
-                    grounded = true;
-                }
-                else if (player->isCollidingFromBottom(platform))
-                {
-                    float platformBottom = platform->getY() - platform->getCollisionHeight() / 2.0f;
-                    player->setPosition(player->getX(), platformBottom - player->getCollisionHeight() / 2.0f);
-
-                    if (player->getVelocityY() > 0)
-                    {
-                        player->setVelocity(player->getVelocityX(), 0.0f);
-                    }
-                }
-                else if (player->isCollidingFromLeft(platform))
-                {
-                    float platformLeft = platform->getX() - platform->getCollisionWidth() / 2.0f;
-                    player->setPosition(platformLeft - player->getCollisionWidth() / 2.0f, player->getY());
-                    player->setVelocity(0.0f, player->getVelocityY());
-                }
-                else if (player->isCollidingFromRight(platform))
-                {
-                    float platformRight = platform->getX() + platform->getCollisionWidth() / 2.0f;
-                    player->setPosition(platformRight + player->getCollisionWidth() / 2.0f, player->getY());
-                    player->setVelocity(0.0f, player->getVelocityY());
-                }
-            }
-        }
-
-        player->setGrounded(grounded);
-
-        if (grounded)
-        {
-            player->setAcceleration(0.0f, 0.0f);
-        }
-        else
-        {
-            player->setAcceleration(0.0f, GRAVITY);
-        }
+        player->handleCollisions(collisions);
     }
 
     for (PhysicsObject *obj : objects)
@@ -217,13 +144,14 @@ void MainScreen::update(float deltaTime)
 
 void MainScreen::display()
 {
-    PhysicsObject *player = getPlayer();
     if (player)
     {
         float camY = player->getY();
 
         glLoadIdentity();
         gluLookAt(0.0f, camY, 1.0f, 0.0f, camY, 0.0f, 0.0f, 1.0f, 0.0f);
+
+        player->draw();
     }
     else
     {
@@ -247,52 +175,39 @@ void MainScreen::display()
     }
 }
 
-PhysicsObject *MainScreen::getPlayer()
+Player *MainScreen::getPlayer()
 {
-    if (objects.empty())
-        return nullptr;
-    return objects[0]; // Assuming the first object is the player
+    return player;
 }
 
 void MainScreen::handleKeyboardUp(unsigned char key, int x, int y)
 {
+    if (player)
+    {
+        player->handleKeyUp(key);
+    }
 }
 
 void MainScreen::handleKeyboardDown(unsigned char key, int x, int y)
 {
+    if (player)
+    {
+        player->handleKeyDown(key);
+    }
 }
 
 void MainScreen::handleSpecialKeysDown(int key, int x, int y)
 {
-    PhysicsObject *player = getPlayer();
-    if (!player)
-        return;
-
-    if (key == GLUT_KEY_LEFT)
+    if (player)
     {
-        player->setVelocity(-MOVEMENT_SPEED, player->getVelocityY());
-    }
-    if (key == GLUT_KEY_RIGHT)
-    {
-        player->setVelocity(MOVEMENT_SPEED, player->getVelocityY());
-    }
-    if (key == GLUT_KEY_UP)
-    {
-        if (player->getIsGrounded())
-        {
-            player->setVelocity(player->getVelocityX(), JUMP_SPEED);
-        }
+        player->handleSpecialKeyDown(key);
     }
 }
 
 void MainScreen::handleSpecialKeysUp(int key, int x, int y)
 {
-    PhysicsObject *player = getPlayer();
-    if (!player)
-        return;
-
-    if (key == GLUT_KEY_LEFT || key == GLUT_KEY_RIGHT)
+    if (player)
     {
-        player->setVelocity(0.0f, player->getVelocityY());
+        player->handleSpecialKeyUp(key);
     }
 }
