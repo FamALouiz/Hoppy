@@ -111,7 +111,7 @@ void MainScreen::init()
         METEOR_BATCH_SIZE,
         meteorDrawFunc);
 
-    lava = new Lava(0.0f, SCREEN_BOTTOM);
+    lava = new Lava(0.0f, SCREEN_BOTTOM - LAVA_HEIGHT);
 }
 
 void MainScreen::update(float deltaTime)

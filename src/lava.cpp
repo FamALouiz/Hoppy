@@ -18,8 +18,7 @@ void Lava::defaultDrawFunc(float x, float y)
     for (int i = 0; i < 10; i++)
     {
         float xPos = x - LAVA_WIDTH / 2.0f + (LAVA_WIDTH / 10.0f) * i;
-        float waveHeight = 0.03f * sin(i + gameTime * 3.0f);
-
+        float waveHeight = 0.03f * sin(i * 0.5f + glutGet(GLUT_ELAPSED_TIME) / 300.0f);
         glVertex2f(xPos, y + LAVA_HEIGHT / 2.0f);
         glVertex2f(xPos + LAVA_WIDTH / 20.0f, y + LAVA_HEIGHT / 2.0f + waveHeight);
         glVertex2f(xPos + LAVA_WIDTH / 10.0f, y + LAVA_HEIGHT / 2.0f);
@@ -51,8 +50,6 @@ Lava::~Lava()
 
 void Lava::updateLava(float deltaTime)
 {
-    gameTime += deltaTime;
-
     if (currentSpeed < maxSpeed)
     {
         currentSpeed += accelerationRate * deltaTime;
@@ -70,6 +67,5 @@ void Lava::updateLava(float deltaTime)
 void Lava::resetSpeed()
 {
     currentSpeed = LAVA_INITIAL_SPEED;
-    gameTime = 0.0f;
     setVelocity(0.0f, LAVA_INITIAL_SPEED);
 }
