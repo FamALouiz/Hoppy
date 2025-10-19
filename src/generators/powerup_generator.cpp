@@ -1,0 +1,100 @@
+#include "generators/powerup_generator.h"
+#include "player.h"
+#include "lava.h"
+#include <cstdlib>
+#include <ctime>
+
+PowerupGenerator::PowerupGenerator(Player *player, Lava *lava, float checkInterval)
+    : player(player), lava(lava), checkInterval(checkInterval), lastCheckedHeight(0.0f)
+{
+    static bool seeded = false;
+    if (!seeded)
+    {
+        srand(time(NULL));
+        seeded = true;
+    }
+}
+
+PowerupGenerator::~PowerupGenerator()
+{
+}
+
+bool PowerupGenerator::shouldSpawnPowerup(float spawnRate)
+{
+    float random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+    return random < spawnRate;
+}
+
+PowerupType PowerupGenerator::selectRandomPowerup()
+{
+    int random = rand() % 3;
+    switch (random)
+    {
+    case 0:
+        return POWERUP_JETPACK;
+    case 1:
+        return POWERUP_LAVA_FREEZE;
+    case 2:
+        return POWERUP_SHIELD;
+    default:
+        return POWERUP_JETPACK;
+    }
+}
+
+void PowerupGenerator::generatePowerups(std::vector<Powerup *> &powerups, std::vector<Platform *> &platforms, float cameraY)
+{
+    if (cameraY - lastCheckedHeight >= checkInterval)
+    {
+        lastCheckedHeight = cameraY;
+
+        for (Platform *platform : platforms)
+        {
+            float platformY = platform->getY();
+            if (platformY > cameraY - 2.0f && platformY < cameraY + 10.0f)
+            {
+                bool hasPowerup = false;
+                for (Powerup *powerup : powerups)
+                {
+                    float distance = abs(powerup->getX() - platform->getX()) + abs(powerup->getY() - platformY);
+                    if (distance < POWERUP_CHECK_DISTANCE)
+                    {
+                        hasPowerup = true;
+                        break;
+                    }
+                }
+
+                if (!hasPowerup)
+                {
+                    PowerupType type = selectRandomPowerup();
+                    Powerup *newPowerup = nullptr;
+                    float spawnRate = 0.0f;
+
+                    switch (type)
+                    {
+                    case POWERUP_JETPACK:
+                        newPowerup = new Jetpack(platform->getX(), platformY + 0.15f, player);
+                        spawnRate = JETPACK_SPAWN_RATE;
+                        break;
+                    case POWERUP_LAVA_FREEZE:
+                        newPowerup = new LavaFreeze(platform->getX(), platformY + 0.15f, lava);
+                        spawnRate = LAVA_FREEZE_SPAWN_RATE;
+                        break;
+                    case POWERUP_SHIELD:
+                        newPowerup = new Shield(platform->getX(), platformY + 0.15f, player);
+                        spawnRate = SHIELD_SPAWN_RATE;
+                        break;
+                    }
+
+                    if (newPowerup && shouldSpawnPowerup(spawnRate))
+                    {
+                        powerups.push_back(newPowerup);
+                    }
+                    else if (newPowerup)
+                    {
+                        delete newPowerup;
+                    }
+                }
+            }
+        }
+    }
+}
