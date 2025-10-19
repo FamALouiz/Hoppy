@@ -17,8 +17,18 @@
 
 #define PLAYER_SPRITE_COLS 8
 #define PLAYER_SPRITE_ROWS 8
-#define PLAYER_SPRITE_INDEX 0
 #define PLAYER_SPRITE_PATH "C:\\Users\\fam\\OneDrive\\Desktop\\GIU\\Semester 7\\Graphics\\Hoppy\\assets\\sprites\\knight.png"
+
+#define IDLE_ROW 0
+#define IDLE_FRAMES 2
+#define RUN_ROW 1
+#define RUN_FRAMES 8
+#define HIT_ROW 6
+#define HIT_FRAMES 4
+#define JUMP_ROW 5
+#define JUMP_COL 0
+
+#define ANIMATION_SPEED 0.07f
 
 class Player : public PhysicsObject
 {
@@ -31,11 +41,20 @@ private:
     int lives = 3;
     int keys = 0;
     bool hasSuperKey = false;
+    bool facingRight = true;
 
     static GLuint spriteTexture;
     static bool textureLoaded;
+
+    float animationTimer;
+    int currentFrame;
+    float hitAnimationTimer;
+    bool isHit;
+
     static void loadTexture();
     static void defaultDrawFunc(float x, float y);
+    void updateAnimation(float deltaTime);
+    int getCurrentSpriteIndex();
 
 public:
     Player(float x, float y);
@@ -49,10 +68,16 @@ public:
     void updateControls(float deltaTime);
     void handleCollisions(const std::vector<_Object *> &collisions);
     void checkBoundaries(float screenLeft, float screenRight);
+    void update(float deltaTime) override;
     void loseLife()
     {
         if (lives > 0)
+        {
             lives--;
+            isHit = true;
+            hitAnimationTimer = 0.0f;
+            currentFrame = 0;
+        }
     }
     bool isDead() const { return lives <= 0; }
     int getLives() const { return lives; }

@@ -4,6 +4,8 @@
 #include <lava.h>
 #include "generators/powerup_manager.h"
 #include "stb_image.h"
+#include "game_window/game_window.h"
+#include "screens/main_screen.h"
 
 GLuint Player::spriteTexture = 0;
 bool Player::textureLoaded = false;
@@ -38,6 +40,58 @@ void Player::loadTexture()
     textureLoaded = true;
 }
 
+int Player::getCurrentSpriteIndex()
+{
+    if (isHit)
+    {
+        return HIT_ROW * PLAYER_SPRITE_COLS + (currentFrame % HIT_FRAMES);
+    }
+
+    if (!getIsGrounded())
+    {
+        return JUMP_ROW * PLAYER_SPRITE_COLS + JUMP_COL;
+    }
+
+    if (moveLeft || moveRight)
+    {
+        return RUN_ROW * PLAYER_SPRITE_COLS + (currentFrame % RUN_FRAMES);
+    }
+
+    return IDLE_ROW * PLAYER_SPRITE_COLS + (currentFrame % IDLE_FRAMES);
+}
+
+void Player::updateAnimation(float deltaTime)
+{
+    if (isHit)
+    {
+        hitAnimationTimer += deltaTime;
+
+        int hitFrame = (int)(hitAnimationTimer / ANIMATION_SPEED);
+
+        if (hitFrame >= HIT_FRAMES)
+        {
+            isHit = false;
+            hitAnimationTimer = 0.0f;
+            currentFrame = 0;
+            animationTimer = 0.0f;
+        }
+        else
+        {
+            currentFrame = hitFrame;
+        }
+        return;
+    }
+
+    animationTimer += deltaTime;
+    if (animationTimer >= ANIMATION_SPEED)
+    {
+        currentFrame++;
+        animationTimer = 0.0f;
+        if (currentFrame > IDLE_FRAMES)
+            currentFrame = 0;
+    }
+}
+
 void Player::defaultDrawFunc(float x, float y)
 {
     if (!textureLoaded)
@@ -55,17 +109,40 @@ void Player::defaultDrawFunc(float x, float y)
         return;
     }
 
+    Player *player = nullptr;
+    MainScreen *mainScreen = dynamic_cast<MainScreen *>(GameWindow::getInstance()->getScreen());
+
+    if (mainScreen)
+    {
+        player = mainScreen->getPlayer();
+    }
+    int spriteIndex = 0;
+    bool facingRight = true;
+
+    if (player)
+    {
+        spriteIndex = player->getCurrentSpriteIndex();
+        facingRight = player->facingRight;
+    }
+
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, spriteTexture);
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-    int row = PLAYER_SPRITE_INDEX / PLAYER_SPRITE_COLS;
-    int col = PLAYER_SPRITE_INDEX % PLAYER_SPRITE_COLS;
+    int row = spriteIndex / PLAYER_SPRITE_COLS;
+    int col = spriteIndex % PLAYER_SPRITE_COLS;
 
     float texLeft = (float)col / PLAYER_SPRITE_COLS;
     float texRight = (float)(col + 1) / PLAYER_SPRITE_COLS;
     float texTop = (float)row / PLAYER_SPRITE_ROWS;
     float texBottom = (float)(row + 1) / PLAYER_SPRITE_ROWS;
+
+    if (!facingRight)
+    {
+        float temp = texLeft;
+        texLeft = texRight;
+        texRight = temp;
+    }
 
     glBegin(GL_QUADS);
     glTexCoord2f(texLeft, texBottom);
@@ -83,7 +160,7 @@ void Player::defaultDrawFunc(float x, float y)
 
 Player::Player(float x, float y)
     : PhysicsObject(x, y, PLAYER_TERMINAL_VELOCITY_X, PLAYER_TERMINAL_VELOCITY_Y, defaultDrawFunc),
-      moveLeft(false), moveRight(false), canJump(false)
+      moveLeft(false), moveRight(false), canJump(false), animationTimer(0.0f), currentFrame(0), hitAnimationTimer(0.0f), isHit(false)
 {
     setVelocity(0.0f, 0.0f);
     setAcceleration(0.0f, GRAVITY);
@@ -92,7 +169,7 @@ Player::Player(float x, float y)
 
 Player::Player(float x, float y, void (*drawFunc)(float, float))
     : PhysicsObject(x, y, PLAYER_TERMINAL_VELOCITY_X, PLAYER_TERMINAL_VELOCITY_Y, drawFunc),
-      moveLeft(false), moveRight(false), canJump(false)
+      moveLeft(false), moveRight(false), canJump(false), animationTimer(0.0f), currentFrame(0), hitAnimationTimer(0.0f), isHit(false)
 {
     setVelocity(0.0f, 0.0f);
     setAcceleration(0.0f, GRAVITY);
@@ -150,10 +227,12 @@ void Player::updateControls(float deltaTime)
     if (moveLeft)
     {
         currentVelX = -PLAYER_MOVEMENT_SPEED;
+        facingRight = false;
     }
     if (moveRight)
     {
         currentVelX = PLAYER_MOVEMENT_SPEED;
+        facingRight = true;
     }
 
     setVelocity(currentVelX, getVelocityY());
@@ -162,6 +241,12 @@ void Player::updateControls(float deltaTime)
     {
         setVelocity(getVelocityX(), PLAYER_JUMP_SPEED);
     }
+}
+
+void Player::update(float deltaTime)
+{
+    updateAnimation(deltaTime);
+    PhysicsObject::update(deltaTime);
 }
 
 void Player::handleCollisions(const std::vector<_Object *> &collisions)
