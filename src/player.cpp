@@ -1,5 +1,6 @@
 #include "player.h"
 #include <iostream>
+#include "platform.h"
 
 void Player::defaultDrawFunc(float x, float y)
 {
@@ -97,13 +98,14 @@ void Player::updateControls(float deltaTime)
 
 void Player::handleCollisions(const std::vector<_Object *> &collisions)
 {
+
     bool grounded = false;
 
     for (_Object *obj : collisions)
     {
-        StaticObject *platform = dynamic_cast<StaticObject *>(obj);
-        if (platform)
+        if (typeid(*obj) == typeid(Platform))
         {
+            Platform *platform = dynamic_cast<Platform *>(obj);
             if (isCollidingFromTop(platform))
             {
                 float platformTop = platform->getY() + platform->getCollisionHeight() / 2.0f;
@@ -138,6 +140,13 @@ void Player::handleCollisions(const std::vector<_Object *> &collisions)
                 setPosition(platformRight + getCollisionWidth() / 2.0f, getY());
                 setVelocity(0.0f, getVelocityY());
             }
+        }
+        else if (typeid(*obj) == typeid(PhysicsObject) && !getIsInvincible()) // Can not collide when invincible
+        {
+            // Collision with a meteor or lava
+            loseLife();
+            setInvincible(true);
+            std::cout << "Player hit by hazard! Lives left: " << getLives() << std::endl;
         }
     }
 

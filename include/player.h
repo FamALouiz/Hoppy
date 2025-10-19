@@ -20,6 +20,8 @@ private:
     bool moveLeft;
     bool moveRight;
     bool canJump;
+    bool isInvincible = false;
+    int lives = 3;
 
     static void defaultDrawFunc(float x, float y);
 
@@ -35,6 +37,15 @@ public:
     void updateControls(float deltaTime);
     void handleCollisions(const std::vector<_Object *> &collisions);
     void checkBoundaries(float screenLeft, float screenRight);
+    void loseLife()
+    {
+        if (lives > 0)
+            lives--;
+    }
+    bool isDead() const { return lives <= 0; }
+    int getLives() const { return lives; }
+    bool getIsInvincible() const { return isInvincible; }
+    void setInvincible(bool invincible) { isInvincible = invincible; }
 };
 
 #endif
