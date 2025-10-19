@@ -1,5 +1,7 @@
 #include <GL/glut.h>
 #include "screens/main_screen.h"
+#include "screens/end_screen.h"
+#include "game_window/game_window.h"
 #include "physics/core.h"
 #include <iostream>
 
@@ -172,6 +174,11 @@ void MainScreen::update(float deltaTime)
                 }
             }
             ++it;
+        }
+        if (player->getLives() <= 0)
+        {
+            EndScreen *endScreen = new EndScreen();
+            GameWindow::getInstance()->setScreen(endScreen);
         }
     }
 
