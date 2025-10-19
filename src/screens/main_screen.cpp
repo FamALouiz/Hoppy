@@ -186,7 +186,7 @@ void MainScreen::update(float deltaTime)
 
     if (lava)
     {
-        lava->updateLava(deltaTime);
+        lava->update(deltaTime);
     }
 
     for (PhysicsObject *obj : objects)

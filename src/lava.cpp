@@ -28,7 +28,7 @@ void Lava::defaultDrawFunc(float x, float y)
 
 Lava::Lava(float x, float y)
     : PhysicsObject(x, y, LAVA_TERMINAL_VELOCITY, LAVA_TERMINAL_VELOCITY, defaultDrawFunc),
-      currentSpeed(LAVA_INITIAL_SPEED), accelerationRate(LAVA_ACCELERATION), maxSpeed(LAVA_MAX_SPEED)
+      currentSpeed(LAVA_INITIAL_SPEED), accelerationRate(LAVA_ACCELERATION)
 {
     setVelocity(0.0f, LAVA_INITIAL_SPEED);
     setAcceleration(0.0f, 0.0f);
@@ -37,7 +37,7 @@ Lava::Lava(float x, float y)
 
 Lava::Lava(float x, float y, void (*drawFunc)(float, float))
     : PhysicsObject(x, y, LAVA_TERMINAL_VELOCITY, LAVA_TERMINAL_VELOCITY, drawFunc),
-      currentSpeed(LAVA_INITIAL_SPEED), accelerationRate(LAVA_ACCELERATION), maxSpeed(LAVA_MAX_SPEED)
+      currentSpeed(LAVA_INITIAL_SPEED), accelerationRate(LAVA_ACCELERATION)
 {
     setVelocity(0.0f, LAVA_INITIAL_SPEED);
     setAcceleration(0.0f, 0.0f);
@@ -46,22 +46,6 @@ Lava::Lava(float x, float y, void (*drawFunc)(float, float))
 
 Lava::~Lava()
 {
-}
-
-void Lava::updateLava(float deltaTime)
-{
-    if (currentSpeed < maxSpeed)
-    {
-        currentSpeed += accelerationRate * deltaTime;
-        if (currentSpeed > maxSpeed)
-        {
-            currentSpeed = maxSpeed;
-        }
-    }
-
-    setVelocity(0.0f, currentSpeed);
-
-    update(deltaTime);
 }
 
 void Lava::resetSpeed()

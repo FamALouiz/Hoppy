@@ -43,6 +43,7 @@ void LavaFreeze::activate()
         isActive = true;
         savedSpeed = lava->getCurrentSpeed();
         savedAcceleration = lava->getAccelerationY();
+        std::cout << "Saved lava speed: " << savedSpeed << ", acceleration: " << savedAcceleration << std::endl;
         lava->setVelocity(0.0f, 0.0f);
         lava->setAcceleration(0.0f, 0.0f);
         std::cout << "Lava freeze activated!" << std::endl;
