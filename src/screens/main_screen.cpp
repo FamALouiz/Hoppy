@@ -210,6 +210,7 @@ void MainScreen::display()
         }
         else
         {
+            glColor3f(PLAYER_COLOR_R, PLAYER_COLOR_G, PLAYER_COLOR_B);
             player->draw();
         }
     }

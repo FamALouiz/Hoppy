@@ -7,7 +7,6 @@
 void Player::defaultDrawFunc(float x, float y)
 {
     glBegin(GL_QUADS);
-    glColor3f(PLAYER_COLOR_R, PLAYER_COLOR_G, PLAYER_COLOR_B);
     glVertex2f(x - PLAYER_SIZE, y - PLAYER_SIZE);
     glVertex2f(x + PLAYER_SIZE, y - PLAYER_SIZE);
     glVertex2f(x + PLAYER_SIZE, y + PLAYER_SIZE);
