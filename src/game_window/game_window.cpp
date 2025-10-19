@@ -45,7 +45,7 @@ GameWindow *GameWindow::getInstance()
 void GameWindow::create(int argc, char **argv, int w, int h, const char *windowTitle, bool fullscreen)
 {
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
 
     title = windowTitle;
 
