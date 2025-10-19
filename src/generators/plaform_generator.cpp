@@ -1,5 +1,4 @@
 #include "generators/platform_generator.h"
-#include "utils.h"
 #include <cstdlib>
 #include <ctime>
 
@@ -19,7 +18,7 @@ float PlatformGenerator::getSectionCenter(int section)
     return screenLeft + (section + 0.5f) * sectionWidth;
 }
 
-void PlatformGenerator::generatePlatforms(std::vector<StaticObject *> &platforms, float cameraY)
+void PlatformGenerator::generatePlatforms(std::vector<Platform *> &platforms, float cameraY)
 {
     float generationThreshold = cameraY + generationAhead;
 
@@ -32,8 +31,7 @@ void PlatformGenerator::generatePlatforms(std::vector<StaticObject *> &platforms
             section = (section + 1) % sections;
         float xPos = getSectionCenter(section);
 
-        StaticObject *platform = new StaticObject(xPos, lastGeneratedHeight, platformDrawFunc);
-        platform->setCollisionBox(platformWidth, platformHeight);
+        Platform *platform = new Platform(xPos, lastGeneratedHeight, platformWidth, platformHeight, platformDrawFunc);
         platforms.push_back(platform);
 
         lastSection = section;

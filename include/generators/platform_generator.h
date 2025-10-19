@@ -2,20 +2,16 @@
 #define PLATFORM_GENERATOR_H
 
 #include "physics/objects.h"
+#include "platform.h"
 #include <vector>
 
 #define SCREEN_SECTIONS 5
 #define PLATFORM_SPACING 0.5f
-#define PLATFORM_WIDTH 0.4f
-#define PLATFORM_HEIGHT 0.1f
 #define SCREEN_LEFT -0.75f
 #define SCREEN_RIGHT 0.75f
 #define SCREEN_BOTTOM -1.0f
 #define SCREEN_TOP 1.0f
 #define GENERATION_AHEAD 10.0f
-#define PLATFORM_COLOR_R 0.5f
-#define PLATFORM_COLOR_G 0.3f
-#define PLATFORM_COLOR_B 0.1f
 
 class PlatformGenerator
 {
@@ -38,7 +34,7 @@ public:
                       float screenLeft, float screenRight, float generationAhead,
                       void (*drawFunc)(float, float));
 
-    void generatePlatforms(std::vector<StaticObject *> &platforms, float cameraY);
+    void generatePlatforms(std::vector<Platform *> &platforms, float cameraY);
 };
 
 #endif

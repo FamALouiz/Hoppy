@@ -27,7 +27,7 @@ MainScreen::~MainScreen()
     }
     meteors.clear();
 
-    for (StaticObject *platform : platforms)
+    for (Platform *platform : platforms)
     {
         delete platform;
     }
@@ -59,6 +59,9 @@ void MainScreen::init()
 
     player = new Player(0.0f, 0.0f);
 
+    Platform *ground = new Platform(0.0f, -0.8f);
+    addPlatform(ground);
+
     auto platformDrawFunc = [](float x, float y)
     {
         glBegin(GL_QUADS);
@@ -69,10 +72,6 @@ void MainScreen::init()
         glVertex2f(x - PLATFORM_WIDTH / 2.0f, y + PLATFORM_HEIGHT / 2.0f);
         glEnd();
     };
-
-    StaticObject *ground = new StaticObject(0.0f, -0.8f, platformDrawFunc);
-    ground->setCollisionBox(PLATFORM_WIDTH, PLATFORM_HEIGHT);
-    addPlatform(ground);
 
     platformGenerator = new PlatformGenerator(
         SCREEN_SECTIONS,
@@ -159,7 +158,7 @@ void MainScreen::display()
         gluLookAt(0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
     }
 
-    for (StaticObject *platform : platforms)
+    for (Platform *platform : platforms)
     {
         platform->draw();
     }
