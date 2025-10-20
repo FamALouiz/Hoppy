@@ -42,15 +42,22 @@ void Key::defaultDrawFunc(float x, float y)
         glBindTexture(GL_TEXTURE_2D, texture);
         glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
+        float textLeft = 0.0f;
+        float textRight = 1.0f / 12.0f;
+        float textTop = 1.0f;
+        float textBottom = 0.0f;
+
+        float size = POWERUP_SIZE * 1.5f;
+
         glBegin(GL_QUADS);
-        glTexCoord2f(0.0f, 1.0f);
-        glVertex2f(x - POWERUP_SIZE, y - POWERUP_SIZE);
-        glTexCoord2f(1.0f, 1.0f);
-        glVertex2f(x + POWERUP_SIZE, y - POWERUP_SIZE);
-        glTexCoord2f(1.0f, 0.0f);
-        glVertex2f(x + POWERUP_SIZE, y + POWERUP_SIZE);
-        glTexCoord2f(0.0f, 0.0f);
-        glVertex2f(x - POWERUP_SIZE, y + POWERUP_SIZE);
+        glTexCoord2f(textLeft, textTop);
+        glVertex2f(x - size, y - size);
+        glTexCoord2f(textRight, textTop);
+        glVertex2f(x + size, y - size);
+        glTexCoord2f(textRight, textBottom);
+        glVertex2f(x + size, y + size);
+        glTexCoord2f(textLeft, textBottom);
+        glVertex2f(x - size, y + size);
         glEnd();
 
         glDisable(GL_TEXTURE_2D);
