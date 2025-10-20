@@ -6,7 +6,7 @@
 #include "physics/core.h"
 #include <iostream>
 
-MainScreen::MainScreen() : platformGenerator(nullptr), meteorGenerator(nullptr), powerupGenerator(nullptr), player(nullptr), lava(nullptr), gate(nullptr), background(nullptr)
+MainScreen::MainScreen() : platformGenerator(nullptr), meteorGenerator(nullptr), powerupGenerator(nullptr), player(nullptr), lava(nullptr), gate(nullptr), background(nullptr), hud(nullptr)
 {
 }
 
@@ -34,6 +34,12 @@ MainScreen::~MainScreen()
     {
         delete background;
         background = nullptr;
+    }
+
+    if (hud)
+    {
+        delete hud;
+        hud = nullptr;
     }
 
     for (PhysicsObject *obj : objects)
@@ -95,6 +101,8 @@ void MainScreen::init()
     background = new Background();
 
     player = new Player(0.0f, 0.0f);
+
+    hud = new HUD(player);
 
     Platform *ground = new Platform(0.0f, -0.8f);
     addPlatform(ground);
@@ -296,6 +304,11 @@ void MainScreen::display()
     for (PhysicsObject *obj : objects)
     {
         obj->draw();
+    }
+
+    if (hud)
+    {
+        hud->draw(camY);
     }
 }
 
