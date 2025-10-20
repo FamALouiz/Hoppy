@@ -207,6 +207,8 @@ void MainScreen::update(float deltaTime)
         for (auto it = powerups.begin(); it != powerups.end();)
         {
             Powerup *powerup = *it;
+            powerup->update(deltaTime);
+
             if (!powerup->getIsCollected() && player->getCollisionBox() && powerup->getCollisionBox())
             {
                 if (CollisionDetector::getInstance()->checkCollision(player->getCollisionBox(), powerup->getCollisionBox()))

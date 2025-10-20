@@ -4,7 +4,9 @@
 #include "physics/objects.h"
 #include <GL/glut.h>
 
-#define POWERUP_SIZE 0.03f
+#define POWERUP_SIZE 0.04f
+#define POWERUP_BOB_SPEED 3.5f
+#define POWERUP_BOB_AMPLITUDE 0.015f
 
 enum PowerupType
 {
@@ -22,6 +24,9 @@ protected:
     float duration;
     bool isActive;
     bool isCollected;
+    float animationTimer;
+    float baseY;
+    float baseX;
 
 public:
     Powerup(float x, float y, PowerupType type, float spawnRate, float duration, void (*drawFunc)(float, float));
@@ -33,6 +38,7 @@ public:
     bool getIsActive() const { return isActive; }
     bool getIsCollected() const { return isCollected; }
     void setCollected(bool collected) { isCollected = collected; }
+    void update(float deltaTime) override;
 
     virtual void activate() = 0;
     virtual void deactivate() = 0;

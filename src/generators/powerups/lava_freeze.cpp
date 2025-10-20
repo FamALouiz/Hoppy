@@ -2,6 +2,7 @@
 #include "lava.h"
 #include "stb_image.h"
 #include <iostream>
+#include <cmath>
 
 GLuint LavaFreeze::texture = 0;
 bool LavaFreeze::textureLoaded = false;
@@ -114,4 +115,11 @@ void LavaFreeze::deactivate()
         lava->setAcceleration(0.0f, savedAcceleration);
         std::cout << "Lava freeze deactivated!" << std::endl;
     }
+}
+
+void LavaFreeze::update(float deltaTime)
+{
+    animationTimer += deltaTime;
+    float offset = sin(animationTimer * POWERUP_BOB_SPEED) * POWERUP_BOB_AMPLITUDE;
+    setPosition(baseX + offset, y);
 }
