@@ -9,7 +9,6 @@ PlatformGenerator::PlatformGenerator(int sections, float spacing, float platform
       screenLeft(screenLeft), screenRight(screenRight), generationAhead(generationAhead),
       platformDrawFunc(drawFunc), lastGeneratedHeight(SCREEN_BOTTOM)
 {
-    srand(time(NULL));
 }
 
 float PlatformGenerator::getSectionCenter(int section)
@@ -31,7 +30,8 @@ void PlatformGenerator::generatePlatforms(std::vector<Platform *> &platforms, fl
             section = (section + 1) % sections;
         float xPos = getSectionCenter(section);
 
-        Platform *platform = new Platform(xPos, lastGeneratedHeight, platformWidth, platformHeight);
+        int tiles = PLATFORM_MIN_TILES + rand() % (PLATFORM_MAX_TILES - PLATFORM_MIN_TILES + 1);
+        Platform *platform = new Platform(xPos, lastGeneratedHeight, tiles);
         platforms.push_back(platform);
 
         lastSection = section;

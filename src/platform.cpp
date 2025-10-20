@@ -3,9 +3,12 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include <iostream>
+#include <cstdlib>
+#include "generators/platform_generator.h"
 
 GLuint Platform::spriteTexture = 0;
 bool Platform::textureLoaded = false;
+Platform *Platform::currentDrawingPlatform = nullptr;
 
 void Platform::loadTexture()
 {
@@ -38,17 +41,23 @@ void Platform::loadTexture()
 
 void Platform::defaultDrawFunc(float x, float y)
 {
+    if (!currentDrawingPlatform)
+        return;
+
+    int tileCount = currentDrawingPlatform->tileCount;
+
     if (!textureLoaded)
         loadTexture();
 
     if (!textureLoaded)
     {
+        float width = tileCount * PLATFORM_TILE_SIZE;
         glBegin(GL_QUADS);
         glColor3f(PLATFORM_COLOR_R, PLATFORM_COLOR_G, PLATFORM_COLOR_B);
-        glVertex2f(x - PLATFORM_WIDTH / 2.0f, y - PLATFORM_HEIGHT / 2.0f);
-        glVertex2f(x + PLATFORM_WIDTH / 2.0f, y - PLATFORM_HEIGHT / 2.0f);
-        glVertex2f(x + PLATFORM_WIDTH / 2.0f, y + PLATFORM_HEIGHT / 2.0f);
-        glVertex2f(x - PLATFORM_WIDTH / 2.0f, y + PLATFORM_HEIGHT / 2.0f);
+        glVertex2f(x - width / 2.0f, y - PLATFORM_HEIGHT / 2.0f);
+        glVertex2f(x + width / 2.0f, y - PLATFORM_HEIGHT / 2.0f);
+        glVertex2f(x + width / 2.0f, y + PLATFORM_HEIGHT / 2.0f);
+        glVertex2f(x - width / 2.0f, y + PLATFORM_HEIGHT / 2.0f);
         glEnd();
         return;
     }
@@ -65,12 +74,15 @@ void Platform::defaultDrawFunc(float x, float y)
     float texTop = (float)row / PLATFORM_SPRITE_ROWS;
     float texBottom = (float)(row + 1) / PLATFORM_SPRITE_ROWS;
 
-    float spriteWidth = PLATFORM_WIDTH / 7.0f;
-
-    for (int i = 0; i < 7; i++)
+    for (int i = 0; i < tileCount; i++)
     {
-        float leftX = x - PLATFORM_WIDTH / 2.0f + i * spriteWidth;
-        float rightX = leftX + spriteWidth;
+        float leftX = x - (tileCount * PLATFORM_TILE_SIZE) / 2.0f + i * PLATFORM_TILE_SIZE;
+        float rightX = leftX + PLATFORM_TILE_SIZE;
+
+        if (leftX <= SCREEN_LEFT)
+            continue;
+        if (rightX >= SCREEN_RIGHT)
+            break;
 
         glBegin(GL_QUADS);
         glTexCoord2f(texLeft, texBottom);
@@ -88,31 +100,44 @@ void Platform::defaultDrawFunc(float x, float y)
 }
 
 Platform::Platform(float x, float y)
-    : StaticObject(x, y, defaultDrawFunc)
+    : StaticObject(x, y, defaultDrawFunc), tileCount(PLATFORM_BASE_TILES)
 {
-    setCollisionBox(PLATFORM_WIDTH, PLATFORM_HEIGHT);
+    setCollisionBox(tileCount * PLATFORM_TILE_SIZE, PLATFORM_HEIGHT);
+}
+
+Platform::Platform(float x, float y, int tiles)
+    : StaticObject(x, y, defaultDrawFunc), tileCount(tiles)
+{
+    setCollisionBox(tileCount * PLATFORM_TILE_SIZE, PLATFORM_HEIGHT);
 }
 
 Platform::Platform(float x, float y, void (*drawFunc)(float, float))
-    : StaticObject(x, y, drawFunc)
+    : StaticObject(x, y, drawFunc), tileCount(PLATFORM_BASE_TILES)
 {
     setCollisionBox(PLATFORM_WIDTH, PLATFORM_HEIGHT);
 }
 
 Platform::Platform(float x, float y, float width, float height)
-    : StaticObject(x, y, defaultDrawFunc)
+    : StaticObject(x, y, defaultDrawFunc), tileCount(PLATFORM_BASE_TILES)
 {
     setCollisionBox(width, height);
 }
 
 Platform::Platform(float x, float y, float width, float height, void (*drawFunc)(float, float))
-    : StaticObject(x, y, drawFunc)
+    : StaticObject(x, y, drawFunc), tileCount(PLATFORM_BASE_TILES)
 {
     setCollisionBox(width, height);
 }
 
 Platform::~Platform()
 {
+}
+
+void Platform::draw()
+{
+    currentDrawingPlatform = this;
+    StaticObject::draw();
+    currentDrawingPlatform = nullptr;
 }
 
 void Platform::cleanupTexture()
