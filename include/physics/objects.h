@@ -127,6 +127,7 @@ private:
     float terminalVelocityY, terminalVelocityX;
     float accelerationX, accelerationY;
     bool isGrounded;
+    bool shouldRemove;
 
 public:
     PhysicsObject(float x, float y, float terminalVelocityX, float terminalVelocityY, void (*drawFunc)(float, float));
@@ -152,6 +153,8 @@ public:
     float getTerminalVelocityY() const { return terminalVelocityY; }
     bool getIsGrounded() const { return isGrounded; }
     void setGrounded(bool grounded) { isGrounded = grounded; }
+    bool getShouldRemove() const { return shouldRemove; }
+    void markForRemoval() { shouldRemove = true; }
     void update(float deltaTime);
     void draw();
 };

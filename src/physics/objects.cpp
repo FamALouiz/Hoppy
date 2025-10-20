@@ -429,7 +429,7 @@ bool _CollisionObject::isCollidingFromLeft(_CollisionObject *other)
 }
 
 PhysicsObject::PhysicsObject(float x, float y, float terminalVelocityX, float terminalVelocityY, void (*drawFunc)(float, float))
-    : _CollisionObject(x, y, drawFunc), velocityX(0.0f), velocityY(0.0f), terminalVelocityY(terminalVelocityY), terminalVelocityX(terminalVelocityX), accelerationX(0.0f), accelerationY(0.0f), isGrounded(false)
+    : _CollisionObject(x, y, drawFunc), velocityX(0.0f), velocityY(0.0f), terminalVelocityY(terminalVelocityY), terminalVelocityX(terminalVelocityX), accelerationX(0.0f), accelerationY(0.0f), isGrounded(false), shouldRemove(false)
 {
 }
 

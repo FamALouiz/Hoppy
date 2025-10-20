@@ -242,6 +242,27 @@ void MainScreen::update(float deltaTime)
     for (PhysicsObject *meteor : meteors)
     {
         meteor->update(deltaTime);
+
+        if (lava && lava->getCollisionBox() && meteor->getCollisionBox())
+        {
+            if (CollisionDetector::getInstance()->checkCollision(lava->getCollisionBox(), meteor->getCollisionBox()))
+            {
+                meteor->markForRemoval();
+            }
+        }
+    }
+
+    for (auto it = meteors.begin(); it != meteors.end();)
+    {
+        if ((*it)->getShouldRemove())
+        {
+            delete *it;
+            it = meteors.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
     }
 }
 

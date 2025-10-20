@@ -330,6 +330,15 @@ void Player::handleCollisions(const std::vector<_Object *> &collisions)
             PowerupManager::getInstance()->activateDamageShield();
             std::cout << "Player hit by meteor! Lives left: " << getLives() << std::endl;
             setFlashingDuration(DAMAGE_INVINCIBILITY_DURATION);
+
+            PhysicsObject *po = dynamic_cast<PhysicsObject *>(obj);
+            if (getCollisionBox() && po && po->getCollisionBox())
+            {
+                if (CollisionDetector::getInstance()->checkCollision(getCollisionBox(), po->getCollisionBox()))
+                {
+                    po->markForRemoval();
+                }
+            }
         }
     }
 
