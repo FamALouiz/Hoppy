@@ -46,6 +46,7 @@ void Shield::activate()
     {
         isActive = true;
         player->setInvincible(true);
+        player->setFlashingDuration(SHIELD_DURATION);
         std::cout << "Shield activated!" << std::endl;
     }
 }

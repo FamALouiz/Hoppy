@@ -1,5 +1,6 @@
 #include "player.h"
 #include <iostream>
+#include <cmath>
 #include "platform.h"
 #include <lava.h>
 #include "generators/powerup_manager.h"
@@ -127,7 +128,15 @@ void Player::defaultDrawFunc(float x, float y)
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, spriteTexture);
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+    float alpha = 1.0f;
+    if (player && player->getIsFlashing())
+    {
+        float flashTime = fmod(player->getFlashingDuration() * 10.0f, 1.0f);
+        alpha = 0.5f + 0.2f * flashTime;
+    }
+
+    glColor4f(1.0f, 1.0f, 1.0f, alpha);
 
     int row = spriteIndex / PLAYER_SPRITE_COLS;
     int col = spriteIndex % PLAYER_SPRITE_COLS;
@@ -246,6 +255,19 @@ void Player::updateControls(float deltaTime)
 void Player::update(float deltaTime)
 {
     updateAnimation(deltaTime);
+
+    if (flashingDuration > 0)
+    {
+        flashingDuration -= deltaTime;
+        isFlashing = true;
+
+        if (flashingDuration <= 0)
+        {
+            flashingDuration = 0;
+            isFlashing = false;
+        }
+    }
+
     PhysicsObject::update(deltaTime);
 }
 
@@ -307,6 +329,7 @@ void Player::handleCollisions(const std::vector<_Object *> &collisions)
             loseLife();
             PowerupManager::getInstance()->activateDamageShield();
             std::cout << "Player hit by meteor! Lives left: " << getLives() << std::endl;
+            setFlashingDuration(DAMAGE_INVINCIBILITY_DURATION);
         }
     }
 

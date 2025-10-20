@@ -5,7 +5,7 @@
 
 #define JETPACK_SPAWN_RATE 0.15f
 #define JETPACK_DURATION 3.0f
-#define JETPACK_SPEED 0.8f
+#define JETPACK_SPEED 3.0f
 #define JETPACK_COLOR_R 0.2f
 #define JETPACK_COLOR_G 0.6f
 #define JETPACK_COLOR_B 1.0f

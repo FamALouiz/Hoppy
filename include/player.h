@@ -42,6 +42,8 @@ private:
     int keys = 0;
     bool hasSuperKey = false;
     bool facingRight = true;
+    float flashingDuration = 0;
+    bool isFlashing = false;
 
     static GLuint spriteTexture;
     static bool textureLoaded;
@@ -90,6 +92,10 @@ public:
     bool getHasSuperKey() const { return hasSuperKey; }
     void setSuperKey(bool superKey) { hasSuperKey = superKey; }
     static void cleanupTexture();
+    void setFlashingDuration(float duration) { flashingDuration = duration; }
+    float getFlashingDuration() const { return flashingDuration; }
+    bool getIsFlashing() const { return isFlashing; }
+    void setIsFlashing(bool flashing) { isFlashing = flashing; }
 };
 
 #endif
