@@ -88,13 +88,13 @@ void SuperKey::defaultDrawFunc(float x, float y)
 SuperKey::SuperKey(float x, float y, Player *player)
     : Powerup(x, y, POWERUP_SUPER_KEY, SUPER_KEY_SPAWN_RATE, 0.0f, defaultDrawFunc), player(player)
 {
-    setCollisionBox(POWERUP_SIZE * 2.0f, POWERUP_SIZE * 2.0f);
+    setCollisionBox(POWERUP_SIZE, POWERUP_SIZE);
 }
 
 SuperKey::SuperKey(float x, float y, Player *player, void (*drawFunc)(float, float))
     : Powerup(x, y, POWERUP_SUPER_KEY, SUPER_KEY_SPAWN_RATE, 0.0f, drawFunc), player(player)
 {
-    setCollisionBox(SUPER_KEY_SIZE * 2.0f, SUPER_KEY_SIZE * 2.0f);
+    setCollisionBox(POWERUP_SIZE, POWERUP_SIZE);
 }
 
 SuperKey::~SuperKey()

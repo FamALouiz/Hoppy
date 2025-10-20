@@ -4,7 +4,7 @@
 #include "physics/objects.h"
 #include <GL/glut.h>
 
-#define POWERUP_SIZE 0.06f
+#define POWERUP_SIZE 0.03f
 
 enum PowerupType
 {
