@@ -102,8 +102,6 @@ void MainScreen::init()
 
     player = new Player(0.0f, 0.0f);
 
-    hud = new HUD(player);
-
     Platform *ground = new Platform(0.0f, -0.8f);
     addPlatform(ground);
 
@@ -151,6 +149,8 @@ void MainScreen::init()
         meteorDrawFunc);
 
     lava = new Lava(0.0f, SCREEN_BOTTOM - LAVA_HEIGHT / 2.0f);
+
+    hud = new HUD(player, lava);
 
     powerupGenerator = new PowerupGenerator(player, lava);
     PowerupManager::getInstance()->setPlayer(player);
