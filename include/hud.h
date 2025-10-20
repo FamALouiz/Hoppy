@@ -6,6 +6,7 @@
 #include "lava.h"
 
 #define HUD_SPRITE_PATH "C:\\Users\\fam\\OneDrive\\Desktop\\GIU\\Semester 7\\Graphics\\Hoppy\\assets\\sprites\\hud.png"
+#define LAVA_WARNING_SPRITE_PATH "C:\\Users\\fam\\OneDrive\\Desktop\\GIU\\Semester 7\\Graphics\\Hoppy\\assets\\sprites\\lava_warning"
 #define HUD_SPRITE_COLS 16
 #define HUD_SPRITE_ROWS 16
 #define HUD_HEART_FILLED_ROW 6
@@ -39,10 +40,12 @@ private:
     Player *player;
     Lava *lava;
     static GLuint spriteTexture;
+    static GLuint lavaWarningTexture;
     static bool textureLoaded;
     static void loadTexture();
     void drawHeart(float x, float y, bool filled);
     void drawIcon(float x, float y, int row, int col, float size);
+    void drawWarningLevel(float x, float y, int row, int col, float size, int warningLevel);
     void drawBackground(float camY);
     void drawNumber(float x, float y, int number);
     int getLavaWarningLevel(float camY);

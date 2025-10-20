@@ -4,6 +4,7 @@
 #include <cmath>
 
 GLuint HUD::spriteTexture = 0;
+GLuint HUD::lavaWarningTexture = 0;
 bool HUD::textureLoaded = false;
 
 void HUD::loadTexture()
@@ -122,6 +123,48 @@ void HUD::drawIcon(float x, float y, int row, int col, float size)
     glDisable(GL_TEXTURE_2D);
 }
 
+void HUD::drawWarningLevel(float x, float y, int row, int col, float size, int warningLevel)
+{
+
+    int width, height, channels;
+    std::string texturePath = std::string(LAVA_WARNING_SPRITE_PATH) + "_" + std::to_string(warningLevel) + ".png";
+    unsigned char *data = stbi_load(texturePath.c_str(), &width, &height, &channels, 4);
+
+    if (!data)
+    {
+        std::cerr << "Failed to load lava warning texture: " << texturePath << std::endl;
+        std::cerr << "STB Error: " << stbi_failure_reason() << std::endl;
+        return;
+    }
+
+    glGenTextures(1, &lavaWarningTexture);
+    glBindTexture(GL_TEXTURE_2D, lavaWarningTexture);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+    stbi_image_free(data);
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, lavaWarningTexture);
+
+    glBegin(GL_QUADS);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex2f(x, y);
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex2f(x + size, y);
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex2f(x + size, y + size);
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex2f(x, y + size);
+    glEnd();
+}
+
 void HUD::drawNumber(float x, float y, int number)
 {
     if (!textureLoaded)
@@ -192,13 +235,14 @@ void HUD::draw(float camY)
 
     currentY -= HUD_HEART_SIZE + HUD_SPACING * 2.0f;
 
-    drawIcon(startX, currentY - HUD_ICON_SIZE, HUD_KEY_ROW, HUD_KEY_COL, HUD_ICON_SIZE);
-    drawNumber(startX + HUD_ICON_SIZE + HUD_SPACING, currentY - HUD_ICON_SIZE + 0.01f, player->getKeys());
+    float iconRowY = currentY - HUD_ICON_SIZE;
 
-    currentY -= HUD_ICON_SIZE + HUD_SPACING * 2.0f;
+    drawIcon(startX, iconRowY, HUD_KEY_ROW, HUD_KEY_COL, HUD_ICON_SIZE);
+
+    float numberX = startX + HUD_ICON_SIZE + HUD_SPACING;
+    drawNumber(numberX, iconRowY + 0.01f, player->getKeys());
 
     int warningLevel = getLavaWarningLevel(camY);
-    std::cout << "Lava Warning Level: " << warningLevel << std::endl;
     int warningRow = HUD_WARNING_LOW_ROW;
     int warningCol = HUD_WARNING_LOW_COL;
 
@@ -213,7 +257,8 @@ void HUD::draw(float camY)
         warningCol = HUD_WARNING_HIGH_COL;
     }
 
-    drawIcon(startX, currentY - HUD_ICON_SIZE, warningRow, warningCol, HUD_ICON_SIZE);
+    float warningX = numberX + 0.08f;
+    drawWarningLevel(warningX, iconRowY, warningRow, warningCol, HUD_ICON_SIZE, warningLevel);
 }
 
 void HUD::cleanupTexture()
