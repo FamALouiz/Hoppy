@@ -4,7 +4,6 @@
 #include "generators/powerups/powerups.h"
 #include "player.h"
 
-#define KEY_SIZE 0.15f
 #define KEY_COLOR_R 1.0f
 #define KEY_COLOR_G 0.6f
 #define KEY_COLOR_B 1.0f
@@ -15,6 +14,9 @@ class Key : public Powerup
 {
 private:
     Player *player;
+    static GLuint texture;
+    static bool textureLoaded;
+    static void loadTexture();
     static void defaultDrawFunc(float x, float y);
 
 public:
