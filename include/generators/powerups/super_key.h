@@ -3,7 +3,6 @@
 
 #include "generators/powerups/powerups.h"
 
-#define SUPER_KEY_SIZE 0.2f
 #define SUPER_KEY_COLOR_R 1.0f
 #define SUPER_KEY_COLOR_G 0.84f
 #define SUPER_KEY_COLOR_B 0.0f
@@ -14,6 +13,9 @@ class SuperKey : public Powerup
 {
 private:
     Player *player;
+    static GLuint texture;
+    static bool textureLoaded;
+    static void loadTexture();
     static void defaultDrawFunc(float x, float y);
 
 public:
