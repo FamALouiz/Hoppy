@@ -15,6 +15,9 @@ class Jetpack : public Powerup
 {
 private:
     Player *player;
+    static GLuint texture;
+    static bool textureLoaded;
+    static void loadTexture();
     static void defaultDrawFunc(float x, float y);
 
 public:
