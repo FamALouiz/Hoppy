@@ -41,6 +41,7 @@ public:
     void update(float deltaTime);
     void clear();
     bool hasDamageShield() const { return damageInvincibilityTimer > 0.0f; }
+    const std::vector<ActivePowerup> &getActivePowerups() const { return activePowerups; }
 };
 
 #endif

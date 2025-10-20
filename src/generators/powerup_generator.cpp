@@ -33,15 +33,13 @@ PowerupType PowerupGenerator::selectRandomPowerup()
     switch (random)
     {
     case 0:
-        return POWERUP_JETPACK;
-    case 1:
         return POWERUP_LAVA_FREEZE;
-    case 2:
+    case 1:
         return POWERUP_SHIELD;
-    case 3:
+    case 2:
         return POWERUP_KEY;
     default:
-        return POWERUP_JETPACK;
+        return POWERUP_LAVA_FREEZE;
     }
 }
 
@@ -111,10 +109,6 @@ void PowerupGenerator::generatePowerups(std::vector<Powerup *> &powerups, std::v
 
                     switch (type)
                     {
-                    case POWERUP_JETPACK:
-                        newPowerup = new Jetpack(platform->getX(), platformY + 0.15f, player);
-                        spawnRate = JETPACK_SPAWN_RATE;
-                        break;
                     case POWERUP_LAVA_FREEZE:
                         newPowerup = new LavaFreeze(platform->getX(), platformY + 0.15f, lava);
                         spawnRate = LAVA_FREEZE_SPAWN_RATE;

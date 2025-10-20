@@ -278,7 +278,7 @@ void Player::handleCollisions(const std::vector<_Object *> &collisions)
 
     for (_Object *obj : collisions)
     {
-        if (typeid(*obj) == typeid(Platform) && !isUsingJetpack)
+        if (typeid(*obj) == typeid(Platform))
         {
             Platform *platform = dynamic_cast<Platform *>(obj);
             if (isCollidingFromTop(platform))
@@ -348,7 +348,7 @@ void Player::handleCollisions(const std::vector<_Object *> &collisions)
     {
         setAcceleration(0.0f, 0.0f);
     }
-    else if (!isUsingJetpack)
+    else
     {
         setAcceleration(0.0f, GRAVITY);
     }

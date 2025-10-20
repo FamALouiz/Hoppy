@@ -37,7 +37,6 @@ private:
     bool moveRight;
     bool canJump;
     bool isInvincible = false;
-    bool isUsingJetpack = false;
     int lives = 3;
     int keys = 0;
     bool hasSuperKey = false;
@@ -85,8 +84,6 @@ public:
     int getLives() const { return lives; }
     bool getIsInvincible() const { return isInvincible; }
     void setInvincible(bool invincible) { isInvincible = invincible; }
-    bool getIsUsingJetpack() const { return isUsingJetpack; }
-    void setUsingJetpack(bool usingJetpack) { isUsingJetpack = usingJetpack; }
     int getKeys() const { return keys; }
     void addKey() { keys++; }
     bool getHasSuperKey() const { return hasSuperKey; }

@@ -15,6 +15,12 @@
 #define HUD_HEART_EMPTY_COL 12
 #define HUD_KEY_ROW 0
 #define HUD_KEY_COL 0
+#define HUD_SHIELD_ROW 0
+#define HUD_SHIELD_COL 2
+#define HUD_LAVA_FREEZE_ROW 0
+#define HUD_LAVA_FREEZE_COL 3
+#define HUD_SUPER_KEY_ROW 0
+#define HUD_SUPER_KEY_COL 4
 #define HUD_WARNING_LOW_ROW 8
 #define HUD_WARNING_LOW_COL 0
 #define HUD_WARNING_MED_ROW 8
@@ -28,9 +34,11 @@
 #define HUD_BACKGROUND_COLOR_B 0.15f
 #define HUD_BACKGROUND_ALPHA 0.4f
 #define HUD_WIDTH 0.5f
-#define HUD_HEIGHT 0.25f
+#define HUD_HEIGHT 0.4f
 #define HUD_PADDING 0.02f
 #define HUD_SPACING 0.015f
+#define HUD_POWERUP_ICON_SIZE 0.06f
+#define HUD_POWERUP_SPACING 0.01f
 #define LAVA_CRITICAL_DISTANCE 0.2f
 #define LAVA_WARNING_DISTANCE 0.9f
 
@@ -48,6 +56,9 @@ private:
     void drawWarningLevel(float x, float y, int row, int col, float size, int warningLevel);
     void drawBackground(float camY);
     void drawNumber(float x, float y, int number);
+    void drawPowerups(float startX, float &currentY, float camY);
+    void drawPowerupIcon(float x, float y, int row, int col, float size, float alpha = 1.0f);
+    void drawProgressBar(float x, float y, float width, float height, float progress);
     int getLavaWarningLevel(float camY);
 
 public:

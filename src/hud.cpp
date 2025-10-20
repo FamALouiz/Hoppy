@@ -1,5 +1,6 @@
 #include "hud.h"
 #include "stb_image.h"
+#include "generators/powerup_manager.h"
 #include <iostream>
 #include <cmath>
 
@@ -123,6 +124,118 @@ void HUD::drawIcon(float x, float y, int row, int col, float size)
     glDisable(GL_TEXTURE_2D);
 }
 
+void HUD::drawPowerupIcon(float x, float y, int row, int col, float size, float alpha)
+{
+    if (!textureLoaded)
+        return;
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, spriteTexture);
+
+    float texLeft = (float)col / HUD_SPRITE_COLS;
+    float texRight = (float)(col + 1) / HUD_SPRITE_COLS;
+    float texTop = (float)row / HUD_SPRITE_ROWS;
+    float texBottom = (float)(row + 1) / HUD_SPRITE_ROWS;
+
+    glBegin(GL_QUADS);
+    glColor4f(1.0f, 1.0f, 1.0f, alpha);
+    glTexCoord2f(texLeft, texBottom);
+    glVertex2f(x, y);
+    glTexCoord2f(texRight, texBottom);
+    glVertex2f(x + size, y);
+    glTexCoord2f(texRight, texTop);
+    glVertex2f(x + size, y + size);
+    glTexCoord2f(texLeft, texTop);
+    glVertex2f(x, y + size);
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+}
+
+void HUD::drawProgressBar(float x, float y, float width, float height, float progress)
+{
+    glDisable(GL_TEXTURE_2D);
+
+    glBegin(GL_QUADS);
+    glColor4f(0.3f, 0.3f, 0.3f, 0.6f);
+    glVertex2f(x, y);
+    glVertex2f(x + width, y);
+    glVertex2f(x + width, y + height);
+    glVertex2f(x, y + height);
+    glEnd();
+
+    float filledWidth = width * progress;
+    glBegin(GL_QUADS);
+    glColor4f(0.2f, 0.8f, 0.2f, 0.8f);
+    glVertex2f(x, y);
+    glVertex2f(x + filledWidth, y);
+    glVertex2f(x + filledWidth, y + height);
+    glVertex2f(x, y + height);
+    glEnd();
+}
+
+void HUD::drawPowerups(float startX, float &currentY, float camY)
+{
+    const std::vector<ActivePowerup> &activePowerups = PowerupManager::getInstance()->getActivePowerups();
+
+    if (activePowerups.empty())
+        return;
+
+    currentY -= HUD_SPACING * 2.0f;
+
+    for (size_t i = 0; i < activePowerups.size(); i++)
+    {
+        const ActivePowerup &active = activePowerups[i];
+        Powerup *powerup = active.powerup;
+
+        int row = 0;
+        int col = 0;
+
+        switch (powerup->getType())
+        {
+        case POWERUP_LAVA_FREEZE:
+            row = HUD_LAVA_FREEZE_ROW;
+            col = HUD_LAVA_FREEZE_COL;
+            break;
+        case POWERUP_SHIELD:
+            row = HUD_SHIELD_ROW;
+            col = HUD_SHIELD_COL;
+            break;
+        case POWERUP_KEY:
+            row = HUD_KEY_ROW;
+            col = HUD_KEY_COL;
+            break;
+        case POWERUP_SUPER_KEY:
+            row = HUD_SUPER_KEY_ROW;
+            col = HUD_SUPER_KEY_COL;
+            break;
+        }
+
+        float iconY = currentY - HUD_POWERUP_ICON_SIZE;
+
+        float alpha = 1.0f;
+        if (active.timeRemaining < 1.0f)
+        {
+            alpha = 0.5f + 0.5f * (active.timeRemaining * 2.0f);
+        }
+        drawPowerupIcon(startX, iconY, row, col, HUD_POWERUP_ICON_SIZE, alpha);
+
+        float barX = startX + HUD_POWERUP_ICON_SIZE + HUD_POWERUP_SPACING;
+        float barY = iconY + HUD_POWERUP_ICON_SIZE * 0.3f;
+        float barWidth = 0.1f;
+        float barHeight = 0.015f;
+        float progress = active.timeRemaining / powerup->getDuration();
+
+        drawProgressBar(barX, barY, barWidth, barHeight, progress);
+
+        int timeLeft = (int)(active.timeRemaining + 0.5f);
+        float timeX = barX + barWidth + HUD_POWERUP_SPACING;
+        drawNumber(timeX, iconY + HUD_POWERUP_ICON_SIZE * 0.25f, timeLeft);
+
+        currentY -= HUD_POWERUP_ICON_SIZE + HUD_POWERUP_SPACING;
+    }
+}
+
 void HUD::drawWarningLevel(float x, float y, int row, int col, float size, int warningLevel)
 {
 
@@ -196,7 +309,6 @@ int HUD::getLavaWarningLevel(float camY)
     float lavaY = lava->getY() + LAVA_HEIGHT / 2.0f;
     float distance = playerY - lavaY;
 
-    std::cout << "Lava Y: " << lavaY << " player y " << playerY << " Distance: " << distance << std::endl;
     if (distance <= LAVA_CRITICAL_DISTANCE)
     {
         return 0;
@@ -259,6 +371,9 @@ void HUD::draw(float camY)
 
     float warningX = numberX + 0.08f;
     drawWarningLevel(warningX, iconRowY, warningRow, warningCol, HUD_ICON_SIZE, warningLevel);
+
+    currentY -= HUD_ICON_SIZE + HUD_SPACING * 2.0f;
+    drawPowerups(startX, currentY, camY);
 }
 
 void HUD::cleanupTexture()

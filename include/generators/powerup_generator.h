@@ -2,7 +2,6 @@
 #define POWERUP_GENERATOR_H
 
 #include "generators/powerups/powerups.h"
-#include "generators/powerups/jetpack.h"
 #include "generators/powerups/lava_freeze.h"
 #include "generators/powerups/shield.h"
 #include "generators/powerups/key.h"
@@ -11,7 +10,7 @@
 #include <vector>
 
 #define POWERUP_CHECK_DISTANCE 0.5f
-#define KEYS_NEEDED_FOR_SUPER_KEY 1
+#define KEYS_NEEDED_FOR_SUPER_KEY 5
 
 class Player;
 class Lava;

@@ -8,7 +8,6 @@
 
 enum PowerupType
 {
-    POWERUP_JETPACK,
     POWERUP_LAVA_FREEZE,
     POWERUP_SHIELD,
     POWERUP_KEY,
