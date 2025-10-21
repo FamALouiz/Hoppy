@@ -10,7 +10,7 @@
 #include <vector>
 
 #define POWERUP_CHECK_DISTANCE 0.5f
-#define KEYS_NEEDED_FOR_SUPER_KEY 5
+#define KEYS_NEEDED_FOR_SUPER_KEY 1
 
 class Player;
 class Lava;

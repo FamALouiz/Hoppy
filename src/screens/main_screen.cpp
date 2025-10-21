@@ -163,10 +163,7 @@ void MainScreen::update(float deltaTime)
 
         if (meteorGenerator)
         {
-            if (!powerupGenerator || !powerupGenerator->hasSuperKeyGenerated())
-            {
-                meteorGenerator->generateMeteors(meteors, player->getY());
-            }
+            meteorGenerator->generateMeteors(meteors, player->getY());
         }
 
         if (powerupGenerator)
