@@ -5,8 +5,44 @@
 #include <math.h>
 #include "game_window/game_window.h"
 
+#include "stb_image.h"
+
+GLuint StartScreen::backgroundTexture = 0;
+bool StartScreen::textureLoaded = false;
+
 StartScreen::StartScreen() : titlePulse(0.0f), showPressStart(true), blinkTimer(0.0f)
 {
+    loadTexture();
+}
+
+void StartScreen::loadTexture()
+{
+    if (textureLoaded)
+        return;
+
+    int width, height, channels;
+    unsigned char *image = stbi_load(START_SCREEN_BG_PATH, &width, &height, &channels, STBI_rgb_alpha);
+
+    if (image)
+    {
+        glGenTextures(1, &backgroundTexture);
+        glBindTexture(GL_TEXTURE_2D, backgroundTexture);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+
+        stbi_image_free(image);
+        textureLoaded = true;
+        printf("Start screen background texture loaded successfully\n");
+    }
+    else
+    {
+        printf("Failed to load start screen background texture: %s\n", START_SCREEN_BG_PATH);
+    }
 }
 
 StartScreen::~StartScreen()
@@ -72,27 +108,34 @@ void StartScreen::handleSpecialKeysDown(int key, int x, int y)
 
 void StartScreen::drawBackground()
 {
-    glBegin(GL_QUADS);
-    glColor3f(0.1f, 0.1f, 0.2f);
-    glVertex2f(-1.0f, -1.0f);
-    glVertex2f(1.0f, -1.0f);
-    glColor3f(0.2f, 0.2f, 0.4f);
-    glVertex2f(1.0f, 1.0f);
-    glVertex2f(-1.0f, 1.0f);
-    glEnd();
-
-    for (int i = 0; i < 30; i++)
+    if (textureLoaded)
     {
-        float x = -1.0f + (i * 0.1f);
-        float pulse = sin(titlePulse + i * 0.3f) * 0.2f;
-        float alpha = 0.1f + pulse * 0.3f;
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, backgroundTexture);
+        glColor3f(1.0f, 1.0f, 1.0f);
 
         glBegin(GL_QUADS);
-        glColor4f(0.3f, 0.5f, 0.7f, alpha);
-        glVertex2f(x, -1.0f);
-        glVertex2f(x + 0.05f, -1.0f);
-        glVertex2f(x + 0.05f, 1.0f);
-        glVertex2f(x, 1.0f);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex2f(-1.0f, -1.0f);
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex2f(1.0f, -1.0f);
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex2f(1.0f, 1.0f);
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex2f(-1.0f, 1.0f);
+        glEnd();
+
+        glDisable(GL_TEXTURE_2D);
+    }
+    else
+    {
+        glBegin(GL_QUADS);
+        glColor3f(0.1f, 0.1f, 0.2f);
+        glVertex2f(-1.0f, -1.0f);
+        glVertex2f(1.0f, -1.0f);
+        glColor3f(0.2f, 0.2f, 0.4f);
+        glVertex2f(1.0f, 1.0f);
+        glVertex2f(-1.0f, 1.0f);
         glEnd();
     }
 }
