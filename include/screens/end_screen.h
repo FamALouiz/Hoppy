@@ -6,13 +6,18 @@
 #include <GL/glut.h>
 #include "utils.h"
 
+#define END_SCREEN_BG_PATH "C:\\Users\\fam\\OneDrive\\Desktop\\GIU\\Semester 7\\Graphics\\Hoppy\\assets\\sprites\\losing_screen_bg.png"
+
 class EndScreen : public GameScreen
 {
 private:
     float titlePulse;
     bool showPressStart;
     float blinkTimer;
+    static GLuint backgroundTexture;
+    static bool textureLoaded;
 
+    static void loadTexture();
     void drawRect(float x, float y, float width, float height);
     void drawTitle();
     void drawPressStart();
