@@ -2,6 +2,7 @@
 #define METEOR_GENERATOR_H
 
 #include "physics/objects.h"
+#include "meteor.h"
 #include <vector>
 
 #define METEOR_SECTIONS 5
@@ -30,16 +31,14 @@ private:
     float lastGeneratedHeight = 2.0f;
 
     float getSectionCenter(int section);
-    void (*meteorDrawFunc)(float, float);
 
 public:
     MeteorGenerator(int sections, float spacing, float meteorSize,
                     float screenLeft, float screenRight,
                     float terminalVelocityX, float terminalVelocityY, float gravity,
-                    int batchSize,
-                    void (*drawFunc)(float, float));
+                    int batchSize);
 
-    void generateMeteors(std::vector<PhysicsObject *> &meteors, float cameraY);
+    void generateMeteors(std::vector<Meteor *> &meteors, float cameraY);
 };
 
 #endif

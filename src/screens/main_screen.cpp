@@ -48,7 +48,7 @@ MainScreen::~MainScreen()
     }
     objects.clear();
 
-    for (PhysicsObject *meteor : meteors)
+    for (Meteor *meteor : meteors)
     {
         delete meteor;
     }
@@ -127,16 +127,6 @@ void MainScreen::init()
         GENERATION_AHEAD,
         platformDrawFunc);
 
-    auto meteorDrawFunc = [](float x, float y)
-    {
-        glBegin(GL_TRIANGLES);
-        glColor3f(METEOR_COLOR_R, METEOR_COLOR_G, METEOR_COLOR_B);
-        glVertex2f(x, y + METEOR_SIZE);
-        glVertex2f(x - METEOR_SIZE, y - METEOR_SIZE);
-        glVertex2f(x + METEOR_SIZE, y - METEOR_SIZE);
-        glEnd();
-    };
-
     meteorGenerator = new MeteorGenerator(
         METEOR_SECTIONS,
         METEOR_SPACING,
@@ -146,8 +136,7 @@ void MainScreen::init()
         METEOR_TERMINAL_VELOCITY_X,
         METEOR_TERMINAL_VELOCITY_Y,
         METEOR_GRAVITY,
-        METEOR_BATCH_SIZE,
-        meteorDrawFunc);
+        METEOR_BATCH_SIZE);
 
     lava = new Lava(0.0f, SCREEN_BOTTOM - LAVA_HEIGHT / 2.0f - 0.3f);
 
@@ -242,7 +231,7 @@ void MainScreen::update(float deltaTime)
             obj->update(deltaTime);
     }
 
-    for (PhysicsObject *meteor : meteors)
+    for (Meteor *meteor : meteors)
     {
         meteor->update(deltaTime);
 
@@ -320,9 +309,31 @@ void MainScreen::display()
         lava->draw();
     }
 
-    for (PhysicsObject *meteor : meteors)
+    for (Meteor *meteor : meteors)
     {
         meteor->draw();
+    }
+
+    glLoadIdentity();
+    gluLookAt(0.0f, camY, 1.0f, 0.0f, camY, 0.0f, 0.0f, 1.0f, 0.0f);
+
+    for (Meteor *meteor : meteors)
+    {
+        if (meteor->getShowWarning() && meteor->getY() > camY + 0.8f)
+        {
+            float warningY = camY + 0.95f;
+            float warningX = meteor->getWarningX();
+
+            glColor3f(1.0f, 0.0f, 0.0f);
+            glRasterPos2f(warningX - 0.03f, warningY);
+            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '!');
+            glRasterPos2f(warningX - 0.01f, warningY);
+            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '!');
+        }
+        else if (meteor->getShowWarning())
+        {
+            meteor->setShowWarning(false);
+        }
     }
 
     for (PhysicsObject *obj : objects)

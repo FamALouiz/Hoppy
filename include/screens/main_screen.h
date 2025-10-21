@@ -16,6 +16,7 @@
 #include "generators/powerup_generator.h"
 #include "generators/powerup_manager.h"
 #include "generators/powerups/powerups.h"
+#include "meteor.h"
 #include <vector>
 
 #define GATE_DISTANCE_ABOVE_PLAYER 15.0f
@@ -25,7 +26,7 @@ class MainScreen : public GameScreen
 private:
     std::vector<Platform *> platforms;
     std::vector<PhysicsObject *> objects;
-    std::vector<PhysicsObject *> meteors;
+    std::vector<Meteor *> meteors;
     std::vector<Powerup *> powerups;
     PlatformGenerator *platformGenerator;
     MeteorGenerator *meteorGenerator;
@@ -42,7 +43,7 @@ public:
 
     void addPlatform(Platform *platform) { platforms.push_back(platform); }
     void addObject(PhysicsObject *obj) { objects.push_back(obj); }
-    void addMeteor(PhysicsObject *meteor) { meteors.push_back(meteor); }
+    void addMeteor(Meteor *meteor) { meteors.push_back(meteor); }
     void addPowerup(Powerup *powerup) { powerups.push_back(powerup); }
     Player *getPlayer();
     Lava *getLava();
