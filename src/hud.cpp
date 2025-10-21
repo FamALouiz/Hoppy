@@ -376,6 +376,37 @@ void HUD::draw(float camY)
     drawPowerups(startX, currentY, camY);
 }
 
+void HUD::drawWarningSprite(float x, float y, float size, float alpha)
+{
+    if (!textureLoaded)
+        return;
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, spriteTexture);
+
+    int row = HUD_WARNING_LOW_ROW;
+    int col = HUD_WARNING_LOW_COL;
+
+    float texLeft = (float)col / HUD_SPRITE_COLS;
+    float texRight = (float)(col + 1) / HUD_SPRITE_COLS;
+    float texTop = (float)row / HUD_SPRITE_ROWS;
+    float texBottom = (float)(row + 1) / HUD_SPRITE_ROWS;
+
+    glBegin(GL_QUADS);
+    glColor4f(1.0f, 0.0f, 0.0f, alpha);
+    glTexCoord2f(texLeft, texBottom);
+    glVertex2f(x, y);
+    glTexCoord2f(texRight, texBottom);
+    glVertex2f(x + size, y);
+    glTexCoord2f(texRight, texTop);
+    glVertex2f(x + size, y + size);
+    glTexCoord2f(texLeft, texTop);
+    glVertex2f(x, y + size);
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+}
+
 void HUD::cleanupTexture()
 {
     if (textureLoaded)

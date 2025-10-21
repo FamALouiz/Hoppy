@@ -14,6 +14,7 @@ private:
     float meteorSize;
     bool showWarning;
     float warningX;
+    float warningTimer;
     static GLuint texture;
     static bool textureLoaded;
     static Meteor *currentDrawingMeteor;
@@ -29,6 +30,7 @@ public:
     void setShowWarning(bool show) { showWarning = show; }
     bool getShowWarning() const { return showWarning; }
     float getWarningX() const { return warningX; }
+    float getWarningTimer() const { return warningTimer; }
     static void cleanupTexture();
 };
 

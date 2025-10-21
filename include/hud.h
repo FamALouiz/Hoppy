@@ -66,6 +66,7 @@ public:
     ~HUD();
 
     void draw(float camY);
+    void drawWarningSprite(float x, float y, float size, float alpha);
     static void cleanupTexture();
 };
 

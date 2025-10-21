@@ -5,6 +5,7 @@
 #include "game_window/game_window.h"
 #include "physics/core.h"
 #include <iostream>
+#include <cmath>
 
 MainScreen::MainScreen() : platformGenerator(nullptr), meteorGenerator(nullptr), powerupGenerator(nullptr), player(nullptr), lava(nullptr), gate(nullptr), background(nullptr), hud(nullptr)
 {
@@ -317,22 +318,25 @@ void MainScreen::display()
     glLoadIdentity();
     gluLookAt(0.0f, camY, 1.0f, 0.0f, camY, 0.0f, 0.0f, 1.0f, 0.0f);
 
-    for (Meteor *meteor : meteors)
+    if (hud)
     {
-        if (meteor->getShowWarning() && meteor->getY() > camY + 0.8f)
+        for (Meteor *meteor : meteors)
         {
-            float warningY = camY + 0.95f;
-            float warningX = meteor->getWarningX();
+            if (meteor->getShowWarning() && meteor->getY() > camY + 0.8f)
+            {
+                float warningY = camY + 0.88f;
+                float warningX = meteor->getWarningX();
+                float warningSize = 0.08f;
 
-            glColor3f(1.0f, 0.0f, 0.0f);
-            glRasterPos2f(warningX - 0.03f, warningY);
-            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '!');
-            glRasterPos2f(warningX - 0.01f, warningY);
-            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '!');
-        }
-        else if (meteor->getShowWarning())
-        {
-            meteor->setShowWarning(false);
+                float flashSpeed = 10.0f;
+                float alpha = 0.5f + 0.5f * sin(meteor->getWarningTimer() * flashSpeed);
+
+                hud->drawWarningSprite(warningX - warningSize / 2.0f, warningY, warningSize, alpha);
+            }
+            else if (meteor->getShowWarning())
+            {
+                meteor->setShowWarning(false);
+            }
         }
     }
 

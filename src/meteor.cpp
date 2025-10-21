@@ -85,7 +85,7 @@ void Meteor::defaultDrawFunc(float x, float y)
 
 Meteor::Meteor(float x, float y, float size, float terminalVelocityX, float terminalVelocityY, float gravity)
     : PhysicsObject(x, y, terminalVelocityX, terminalVelocityY, defaultDrawFunc),
-      rotation(0.0f), meteorSize(size), showWarning(true), warningX(x)
+      rotation(0.0f), meteorSize(size), showWarning(true), warningX(x), warningTimer(0.0f)
 {
     setVelocity(0.0f, 0.0f);
     setAcceleration(0.0f, gravity);
@@ -109,6 +109,9 @@ void Meteor::update(float deltaTime)
     rotation += METEOR_ROTATION_SPEED * deltaTime;
     if (rotation >= 360.0f)
         rotation -= 360.0f;
+
+    if (showWarning)
+        warningTimer += deltaTime;
 }
 
 void Meteor::cleanupTexture()
