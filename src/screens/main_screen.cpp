@@ -100,10 +100,11 @@ void MainScreen::init()
 
     background = new Background();
 
-    player = new Player(0.0f, 0.0f);
-
     Platform *ground = new Platform(0.0f, -0.8f);
     addPlatform(ground);
+
+    float platformTop = ground->getY() + ground->getCollisionHeight() / 2.0f;
+    player = new Player(0.0f, platformTop);
 
     auto platformDrawFunc = [](float x, float y)
     {
@@ -148,7 +149,7 @@ void MainScreen::init()
         METEOR_BATCH_SIZE,
         meteorDrawFunc);
 
-    lava = new Lava(0.0f, SCREEN_BOTTOM - LAVA_HEIGHT / 2.0f);
+    lava = new Lava(0.0f, SCREEN_BOTTOM - LAVA_HEIGHT / 2.0f - 0.3f);
 
     hud = new HUD(player, lava);
 

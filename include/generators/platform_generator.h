@@ -24,7 +24,7 @@ private:
     float screenLeft;
     float screenRight;
     float generationAhead;
-    int lastSection = -1;
+    int lastSection = 2;
 
     float getSectionCenter(int section);
     void (*platformDrawFunc)(float, float);
