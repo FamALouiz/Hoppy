@@ -83,12 +83,23 @@ void Player::updateAnimation(float deltaTime)
         return;
     }
 
+    int maxFrames = IDLE_FRAMES;
+
+    if (!getIsGrounded())
+    {
+        maxFrames = 1;
+    }
+    else if (moveLeft || moveRight)
+    {
+        maxFrames = RUN_FRAMES;
+    }
+
     animationTimer += deltaTime;
     if (animationTimer >= ANIMATION_SPEED)
     {
         currentFrame++;
         animationTimer = 0.0f;
-        if (currentFrame > IDLE_FRAMES)
+        if (currentFrame >= maxFrames)
             currentFrame = 0;
     }
 }

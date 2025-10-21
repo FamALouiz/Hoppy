@@ -20,8 +20,8 @@
 #define PLAYER_SPRITE_PATH "C:\\Users\\fam\\OneDrive\\Desktop\\GIU\\Semester 7\\Graphics\\Hoppy\\assets\\sprites\\knight.png"
 
 #define IDLE_ROW 0
-#define IDLE_FRAMES 2
-#define RUN_ROW 1
+#define IDLE_FRAMES 4
+#define RUN_ROW 2
 #define RUN_FRAMES 8
 #define HIT_ROW 6
 #define HIT_FRAMES 4
