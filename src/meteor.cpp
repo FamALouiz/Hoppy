@@ -78,6 +78,35 @@ void Meteor::defaultDrawFunc(float x, float y)
             glVertex2f(cx, cy);
         }
         glEnd();
+
+        const int innerSegments = 8;
+        glBegin(GL_TRIANGLE_FAN);
+        glColor3f(1.0f, 0.4f, 0.2f);
+        glVertex2f(0.0f, 0.0f);
+        for (int i = 0; i <= innerSegments; i++)
+        {
+            float angle = 2.0f * 3.14159f * i / innerSegments;
+            float cx = meteorSize * 0.5f * cos(angle);
+            float cy = meteorSize * 0.5f * sin(angle);
+            glVertex2f(cx, cy);
+        }
+        glEnd();
+
+        glBegin(GL_TRIANGLES);
+        glColor3f(0.6f, 0.1f, 0.05f);
+        for (int i = 0; i < 6; i++)
+        {
+            float angle = 2.0f * 3.14159f * i / 6.0f;
+            float nextAngle = 2.0f * 3.14159f * (i + 1) / 6.0f;
+            float cx = meteorSize * 0.8f * cos(angle);
+            float cy = meteorSize * 0.8f * sin(angle);
+            float nx = meteorSize * 0.8f * cos(nextAngle);
+            float ny = meteorSize * 0.8f * sin(nextAngle);
+            glVertex2f(0.0f, 0.0f);
+            glVertex2f(cx, cy);
+            glVertex2f(nx, ny);
+        }
+        glEnd();
     }
 
     glPopMatrix();

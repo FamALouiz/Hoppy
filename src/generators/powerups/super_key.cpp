@@ -82,6 +82,27 @@ void SuperKey::defaultDrawFunc(float x, float y)
             glVertex2f(nx, ny);
         }
         glEnd();
+
+        const int segments = 10;
+        glBegin(GL_TRIANGLE_FAN);
+        glColor3f(1.0f, 0.9f, 0.5f);
+        glVertex2f(x, y);
+        for (int i = 0; i <= segments; i++)
+        {
+            float angle = 2.0f * 3.14159f * i / segments;
+            float cx = x + POWERUP_SIZE * 0.35f * cos(angle);
+            float cy = y + POWERUP_SIZE * 0.35f * sin(angle);
+            glVertex2f(cx, cy);
+        }
+        glEnd();
+
+        glBegin(GL_QUADS);
+        glColor3f(0.9f, 0.7f, 0.3f);
+        glVertex2f(x - POWERUP_SIZE * 0.15f, y - POWERUP_SIZE * 0.15f);
+        glVertex2f(x + POWERUP_SIZE * 0.15f, y - POWERUP_SIZE * 0.15f);
+        glVertex2f(x + POWERUP_SIZE * 0.15f, y + POWERUP_SIZE * 0.15f);
+        glVertex2f(x - POWERUP_SIZE * 0.15f, y + POWERUP_SIZE * 0.15f);
+        glEnd();
     }
 }
 

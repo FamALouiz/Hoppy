@@ -94,6 +94,44 @@ void HUD::drawHeart(float x, float y, bool filled)
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
+
+    float centerX = x + HUD_HEART_SIZE / 2;
+    float centerY = y + HUD_HEART_SIZE / 2;
+    float decorSize = HUD_HEART_SIZE * 0.15f;
+
+    glBegin(GL_TRIANGLES);
+    if (filled)
+    {
+        glColor4f(1.0f, 0.8f, 0.8f, 0.6f);
+    }
+    else
+    {
+        glColor4f(0.5f, 0.5f, 0.5f, 0.4f);
+    }
+    glVertex2f(centerX - decorSize, centerY);
+    glVertex2f(centerX + decorSize, centerY);
+    glVertex2f(centerX, centerY + decorSize);
+    glEnd();
+
+    const int segments = 6;
+    glBegin(GL_TRIANGLE_FAN);
+    if (filled)
+    {
+        glColor4f(1.0f, 0.9f, 0.9f, 0.3f);
+    }
+    else
+    {
+        glColor4f(0.6f, 0.6f, 0.6f, 0.3f);
+    }
+    glVertex2f(centerX, centerY);
+    for (int i = 0; i <= segments; i++)
+    {
+        float angle = 2.0f * 3.14159f * i / segments;
+        float cx = centerX + decorSize * 0.5f * cos(angle);
+        float cy = centerY + decorSize * 0.5f * sin(angle);
+        glVertex2f(cx, cy);
+    }
+    glEnd();
 }
 
 void HUD::drawIcon(float x, float y, int row, int col, float size)
@@ -122,6 +160,25 @@ void HUD::drawIcon(float x, float y, int row, int col, float size)
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
+
+    float centerX = x + size / 2;
+    float centerY = y + size / 2;
+    float decorSize = size * 0.2f;
+
+    glBegin(GL_QUADS);
+    glColor4f(1.0f, 0.5f, 0.0f, 0.5f);
+    glVertex2f(centerX - decorSize, centerY - decorSize);
+    glVertex2f(centerX + decorSize, centerY - decorSize);
+    glVertex2f(centerX + decorSize, centerY + decorSize);
+    glVertex2f(centerX - decorSize, centerY + decorSize);
+    glEnd();
+
+    glBegin(GL_TRIANGLES);
+    glColor4f(1.0f, 0.3f, 0.0f, 0.6f);
+    glVertex2f(centerX, centerY + decorSize * 1.5f);
+    glVertex2f(centerX - decorSize, centerY);
+    glVertex2f(centerX + decorSize, centerY);
+    glEnd();
 }
 
 void HUD::drawPowerupIcon(float x, float y, int row, int col, float size, float alpha)

@@ -118,6 +118,35 @@ void Player::defaultDrawFunc(float x, float y)
         glVertex2f(x + PLAYER_WIDTH / 2, y + PLAYER_HEIGHT / 2);
         glVertex2f(x - PLAYER_WIDTH / 2, y + PLAYER_HEIGHT / 2);
         glEnd();
+
+        glBegin(GL_TRIANGLES);
+        glColor3f(0.9f, 0.7f, 0.3f);
+        glVertex2f(x, y + PLAYER_HEIGHT / 2);
+        glVertex2f(x - PLAYER_WIDTH / 3, y + PLAYER_HEIGHT / 4);
+        glVertex2f(x + PLAYER_WIDTH / 3, y + PLAYER_HEIGHT / 4);
+        glEnd();
+
+        const int segments = 8;
+        glBegin(GL_TRIANGLE_FAN);
+        glColor3f(0.8f, 0.5f, 0.2f);
+        glVertex2f(x, y);
+        for (int i = 0; i <= segments; i++)
+        {
+            float angle = 3.14159f * i / segments;
+            float cx = x + (PLAYER_WIDTH / 4) * cos(angle);
+            float cy = y + (PLAYER_HEIGHT / 4) * sin(angle);
+            glVertex2f(cx, cy);
+        }
+        glEnd();
+
+        glBegin(GL_QUADS);
+        glColor3f(0.3f, 0.3f, 0.3f);
+        glVertex2f(x - PLAYER_WIDTH / 4, y - PLAYER_HEIGHT / 4);
+        glVertex2f(x + PLAYER_WIDTH / 4, y - PLAYER_HEIGHT / 4);
+        glVertex2f(x + PLAYER_WIDTH / 4, y - PLAYER_HEIGHT / 2);
+        glVertex2f(x - PLAYER_WIDTH / 4, y - PLAYER_HEIGHT / 2);
+        glEnd();
+
         return;
     }
 
@@ -173,6 +202,34 @@ void Player::defaultDrawFunc(float x, float y)
     glVertex2f(x + PLAYER_WIDTH / 2, y + PLAYER_HEIGHT / 2);
     glTexCoord2f(texLeft, texTop);
     glVertex2f(x - PLAYER_WIDTH / 2, y + PLAYER_HEIGHT / 2);
+    glEnd();
+
+    glBegin(GL_TRIANGLES);
+    glColor3f(0.9f, 0.7f, 0.3f);
+    glVertex2f(x, y + PLAYER_HEIGHT / 2);
+    glVertex2f(x - PLAYER_WIDTH / 3, y + PLAYER_HEIGHT / 4);
+    glVertex2f(x + PLAYER_WIDTH / 3, y + PLAYER_HEIGHT / 4);
+    glEnd();
+
+    const int segments = 8;
+    glBegin(GL_TRIANGLE_FAN);
+    glColor3f(0.8f, 0.5f, 0.2f);
+    glVertex2f(x, y);
+    for (int i = 0; i <= segments; i++)
+    {
+        float angle = 3.14159f * i / segments;
+        float cx = x + (PLAYER_WIDTH / 4) * cos(angle);
+        float cy = y + (PLAYER_HEIGHT / 4) * sin(angle);
+        glVertex2f(cx, cy);
+    }
+    glEnd();
+
+    glBegin(GL_QUADS);
+    glColor3f(0.3f, 0.3f, 0.3f);
+    glVertex2f(x - PLAYER_WIDTH / 4, y - PLAYER_HEIGHT / 4);
+    glVertex2f(x + PLAYER_WIDTH / 4, y - PLAYER_HEIGHT / 4);
+    glVertex2f(x + PLAYER_WIDTH / 4, y - PLAYER_HEIGHT / 2);
+    glVertex2f(x - PLAYER_WIDTH / 4, y - PLAYER_HEIGHT / 2);
     glEnd();
 
     glDisable(GL_TEXTURE_2D);

@@ -78,6 +78,21 @@ void Shield::defaultDrawFunc(float x, float y)
             glVertex2f(cx, cy);
         }
         glEnd();
+
+        glBegin(GL_TRIANGLES);
+        glColor3f(0.7f, 0.7f, 0.9f);
+        glVertex2f(x, y + POWERUP_SIZE * 0.6f);
+        glVertex2f(x - POWERUP_SIZE * 0.4f, y - POWERUP_SIZE * 0.2f);
+        glVertex2f(x + POWERUP_SIZE * 0.4f, y - POWERUP_SIZE * 0.2f);
+        glEnd();
+
+        glBegin(GL_QUADS);
+        glColor3f(0.5f, 0.5f, 0.7f);
+        glVertex2f(x - POWERUP_SIZE * 0.3f, y - POWERUP_SIZE * 0.4f);
+        glVertex2f(x + POWERUP_SIZE * 0.3f, y - POWERUP_SIZE * 0.4f);
+        glVertex2f(x + POWERUP_SIZE * 0.3f, y - POWERUP_SIZE * 0.6f);
+        glVertex2f(x - POWERUP_SIZE * 0.3f, y - POWERUP_SIZE * 0.6f);
+        glEnd();
     }
 }
 

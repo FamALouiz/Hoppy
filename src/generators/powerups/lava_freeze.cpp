@@ -73,6 +73,27 @@ void LavaFreeze::defaultDrawFunc(float x, float y)
         glVertex2f(x - POWERUP_SIZE * 0.4f, y - POWERUP_SIZE * 0.3f);
         glVertex2f(x + POWERUP_SIZE * 0.4f, y - POWERUP_SIZE * 0.3f);
         glEnd();
+
+        const int segments = 6;
+        glBegin(GL_TRIANGLE_FAN);
+        glColor3f(0.8f, 0.9f, 1.0f);
+        glVertex2f(x, y);
+        for (int i = 0; i <= segments; i++)
+        {
+            float angle = 2.0f * 3.14159f * i / segments;
+            float cx = x + POWERUP_SIZE * 0.3f * cos(angle);
+            float cy = y + POWERUP_SIZE * 0.3f * sin(angle);
+            glVertex2f(cx, cy);
+        }
+        glEnd();
+
+        glBegin(GL_QUADS);
+        glColor3f(0.6f, 0.8f, 0.95f);
+        glVertex2f(x - POWERUP_SIZE * 0.2f, y - POWERUP_SIZE * 0.6f);
+        glVertex2f(x + POWERUP_SIZE * 0.2f, y - POWERUP_SIZE * 0.6f);
+        glVertex2f(x + POWERUP_SIZE * 0.2f, y - POWERUP_SIZE * 0.8f);
+        glVertex2f(x - POWERUP_SIZE * 0.2f, y - POWERUP_SIZE * 0.8f);
+        glEnd();
     }
 }
 

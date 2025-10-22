@@ -1,6 +1,7 @@
 #include "generators/powerups/key.h"
 #include "stb_image.h"
 #include <iostream>
+#include <cmath>
 
 GLuint Key::texture = 0;
 bool Key::textureLoaded = false;
@@ -70,11 +71,33 @@ void Key::defaultDrawFunc(float x, float y)
         glVertex2f(x + POWERUP_SIZE, y - POWERUP_SIZE * 0.5f);
         glVertex2f(x, y + POWERUP_SIZE);
         glEnd();
+
         glBegin(GL_QUADS);
         glVertex2f(x - POWERUP_SIZE * 0.5f, y - POWERUP_SIZE * 0.5f);
         glVertex2f(x + POWERUP_SIZE * 0.5f, y - POWERUP_SIZE * 0.5f);
         glVertex2f(x + POWERUP_SIZE * 0.5f, y - POWERUP_SIZE);
         glVertex2f(x - POWERUP_SIZE * 0.5f, y - POWERUP_SIZE);
+        glEnd();
+
+        const int segments = 8;
+        glBegin(GL_TRIANGLE_FAN);
+        glColor3f(1.0f, 0.9f, 0.3f);
+        glVertex2f(x, y);
+        for (int i = 0; i <= segments; i++)
+        {
+            float angle = 2.0f * 3.14159f * i / segments;
+            float cx = x + POWERUP_SIZE * 0.4f * cos(angle);
+            float cy = y + POWERUP_SIZE * 0.4f * sin(angle);
+            glVertex2f(cx, cy);
+        }
+        glEnd();
+
+        glBegin(GL_QUADS);
+        glColor3f(0.8f, 0.7f, 0.2f);
+        glVertex2f(x - POWERUP_SIZE * 0.2f, y + POWERUP_SIZE * 0.2f);
+        glVertex2f(x + POWERUP_SIZE * 0.2f, y + POWERUP_SIZE * 0.2f);
+        glVertex2f(x + POWERUP_SIZE * 0.2f, y + POWERUP_SIZE * 0.6f);
+        glVertex2f(x - POWERUP_SIZE * 0.2f, y + POWERUP_SIZE * 0.6f);
         glEnd();
     }
 }
