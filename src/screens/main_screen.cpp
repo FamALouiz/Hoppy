@@ -7,7 +7,7 @@
 #include <iostream>
 #include <cmath>
 
-MainScreen::MainScreen() : platformGenerator(nullptr), meteorGenerator(nullptr), powerupGenerator(nullptr), player(nullptr), lava(nullptr), gate(nullptr), background(nullptr), hud(nullptr)
+MainScreen::MainScreen() : platformGenerator(nullptr), meteorGenerator(nullptr), powerupGenerator(nullptr), player(nullptr), lava(nullptr), gate(nullptr), background(nullptr), hud(nullptr), doorOpening(false)
 {
 }
 
@@ -180,16 +180,24 @@ void MainScreen::update(float deltaTime)
         std::vector<_Object *> collisions = player->getCollidingObjects();
         player->handleCollisions(collisions);
 
-        if (gate && player->getHasSuperKey())
+        if (gate && player->getHasSuperKey() && !doorOpening)
         {
             if (player->getCollisionBox() && gate->getCollisionBox())
             {
                 if (CollisionDetector::getInstance()->checkCollision(player->getCollisionBox(), gate->getCollisionBox()))
                 {
-                    WinScreen *winScreen = new WinScreen();
-                    GameWindow::getInstance()->setScreen(winScreen);
+                    doorOpening = true;
+                    gate->startOpening();
+                    player->setInvincible(true);
                 }
             }
+        }
+
+        if (doorOpening && gate && gate->getIsOpen())
+        {
+            player->setInvincible(true);
+            WinScreen *winScreen = new WinScreen();
+            GameWindow::getInstance()->setScreen(winScreen);
         }
 
         for (auto it = powerups.begin(); it != powerups.end();)
@@ -221,6 +229,11 @@ void MainScreen::update(float deltaTime)
     if (lava)
     {
         lava->update(deltaTime);
+    }
+
+    if (gate)
+    {
+        gate->update(deltaTime);
     }
 
     for (PhysicsObject *obj : objects)
@@ -294,7 +307,10 @@ void MainScreen::display()
 
     for (Platform *platform : platforms)
     {
-        platform->draw();
+        if (platform != gate)
+        {
+            platform->draw();
+        }
     }
 
     for (Powerup *powerup : powerups)
@@ -340,6 +356,11 @@ void MainScreen::display()
     for (PhysicsObject *obj : objects)
     {
         obj->draw();
+    }
+
+    if (gate)
+    {
+        gate->draw();
     }
 
     if (hud)

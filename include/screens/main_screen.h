@@ -36,6 +36,7 @@ private:
     Gate *gate;
     Background *background;
     HUD *hud;
+    bool doorOpening;
 
 public:
     MainScreen();
