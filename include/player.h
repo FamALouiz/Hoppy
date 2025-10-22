@@ -51,6 +51,7 @@ private:
     int currentFrame;
     float hitAnimationTimer;
     bool isHit;
+    bool isFrozen = false;
 
     static void loadTexture();
     static void defaultDrawFunc(float x, float y);
@@ -93,6 +94,8 @@ public:
     float getFlashingDuration() const { return flashingDuration; }
     bool getIsFlashing() const { return isFlashing; }
     void setIsFlashing(bool flashing) { isFlashing = flashing; }
+    bool getIsFrozen() const { return isFrozen; }
+    void setIsFrozen(bool frozen) { isFrozen = frozen; }
 };
 
 #endif

@@ -189,13 +189,16 @@ void MainScreen::update(float deltaTime)
                     doorOpening = true;
                     gate->startOpening();
                     player->setInvincible(true);
+                    player->setVelocity(0.0f, 0.0f);
+                    player->setAcceleration(0.0f, 0.0f);
+                    player->setGrounded(true);
+                    player->setIsFrozen(true);
                 }
             }
         }
 
         if (doorOpening && gate && gate->getIsOpen())
         {
-            player->setInvincible(true);
             WinScreen *winScreen = new WinScreen();
             GameWindow::getInstance()->setScreen(winScreen);
         }

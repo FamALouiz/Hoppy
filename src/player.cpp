@@ -267,6 +267,13 @@ void Player::handleKeyUp(int key)
 
 void Player::handleSpecialKeyDown(int key)
 {
+    if (getIsFrozen())
+    {
+        moveLeft = false;
+        moveRight = false;
+        canJump = false;
+        return;
+    }
     if (key == GLUT_KEY_LEFT)
     {
         moveLeft = true;
@@ -283,6 +290,13 @@ void Player::handleSpecialKeyDown(int key)
 
 void Player::handleSpecialKeyUp(int key)
 {
+    if (getIsFrozen())
+    {
+        moveLeft = false;
+        moveRight = false;
+        canJump = false;
+        return;
+    }
     if (key == GLUT_KEY_LEFT)
     {
         moveLeft = false;
@@ -412,7 +426,7 @@ void Player::handleCollisions(const std::vector<_Object *> &collisions)
 
     setGrounded(grounded);
 
-    if (grounded)
+    if (grounded || getIsFrozen())
     {
         setAcceleration(0.0f, 0.0f);
     }
